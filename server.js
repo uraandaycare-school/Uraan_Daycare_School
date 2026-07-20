@@ -13,6 +13,8 @@
 
 'use strict';
 
+require('dotenv').config();
+
 const express  = require('express');
 const path     = require('path');
 const helmet   = require('helmet');
@@ -22,10 +24,10 @@ const crypto   = require('crypto');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ─── Cloudflare Turnstile Keys ────────────────────────────────────────────────
+// ─── Google reCAPTCHA Keys ───────────────────────────────────────────────────
 // Replace with real production keys via environment variables before deploying.
-const TURNSTILE_SITE_KEY   = process.env.TURNSTILE_SITE_KEY   || '1x00000000000000000000AA';
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '1x00000000000000000000000000000000';
+const RECAPTCHA_SITE_KEY   = process.env.RECAPTCHA_SITE_KEY   || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
 
 // ─── View Engine (EJS) ───────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
@@ -54,38 +56,41 @@ app.use(
 
         scriptSrc: [
           "'self'",
-          // Per-request cryptographic nonce — unique every page load
           (req, res) => `'nonce-${res.locals.nonce}'`,
-          // Cloudflare Turnstile injects sub-scripts from its own domain
-          'https://challenges.cloudflare.com',
+          "'strict-dynamic'",
+          'https://www.google.com/recaptcha/',
+          'https://www.gstatic.com/recaptcha/',
+          'https://www.google.com',
+          'https://www.gstatic.com',
         ],
 
         styleSrc: [
           "'self'",
-          // Google Fonts CSS (served as external stylesheet, not inline)
+          "'unsafe-inline'",
           'https://fonts.googleapis.com',
-          // Font Awesome CSS (loaded via <link> with SRI)
           'https://cdnjs.cloudflare.com',
-          // NOTE: 'unsafe-inline' intentionally OMITTED — all inline style=""
-          // attributes have been moved to CSS classes (OWASP A03 hardening).
+          'https://www.gstatic.com',
         ],
 
         fontSrc: [
           "'self'",
-          'https://fonts.gstatic.com',       // Google Fonts binary files
-          'https://cdnjs.cloudflare.com',    // Font Awesome webfont files
+          'https://fonts.gstatic.com',
+          'https://cdnjs.cloudflare.com',
         ],
 
         frameSrc: [
           "'self'",
-          'https://challenges.cloudflare.com', // Turnstile challenge iframe
-          'https://www.google.com',             // Google Maps embed
-          'https://maps.googleapis.com',        // Maps API
+          'https://www.google.com/recaptcha/',
+          'https://recaptcha.google.com',
+          'https://www.google.com',
+          'https://maps.googleapis.com',
         ],
 
         connectSrc: [
           "'self'",
-          'https://challenges.cloudflare.com',
+          'https://www.google.com/recaptcha/',
+          'https://www.google.com',
+          'https://www.gstatic.com',
         ],
 
         imgSrc: [
@@ -153,7 +158,7 @@ const formSubmitLimiter = rateLimit({
 // 5. STATIC FILES
 //    Serves /css, /js, /assets — index.html is now rendered by EJS, not static.
 // ═══════════════════════════════════════════════════════════════════════════════
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 6. SECURITY HELPERS
@@ -163,7 +168,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * PII Redactor — OWASP A09
  * Never log raw names, phone numbers, or email addresses.
  * redact('Ali Ahmed') → 'Al***'
- * redact('admissions@uraan.edu.pk') → 'ad***'
+ * redact('uraandaycare@gmail.com') → 'ur***'
  */
 function redact(str) {
   if (!str || typeof str !== 'string' || str.length === 0) return '[empty]';
@@ -226,30 +231,33 @@ function requireXHR(req, res, next) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 8. CLOUDFLARE TURNSTILE CAPTCHA VERIFICATION
 // ═══════════════════════════════════════════════════════════════════════════════
-async function verifyTurnstileToken(token, ipAddress) {
+async function verifyCaptchaToken(token, ipAddress) {
   if (!token) return false;
 
   // Skip network call in local test mode (sandbox token)
-  if (process.env.NODE_ENV === 'test' && token === '1x00000000000000000000AA') {
+  if (process.env.NODE_ENV === 'test' && (token === '1x00000000000000000000AA' || token === 'test-token')) {
     return true;
   }
 
   try {
     const body = new URLSearchParams();
-    body.append('secret',   TURNSTILE_SECRET_KEY);
+    body.append('secret',   RECAPTCHA_SECRET_KEY);
     body.append('response', token);
-    body.append('remoteip', ipAddress);
+    if (ipAddress) body.append('remoteip', ipAddress);
 
-    const outcome = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    const outcome = await fetch('https://www.google.com/recaptcha/api/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body,
     });
 
     const json = await outcome.json();
+    if (!json.success) {
+      console.warn('[reCAPTCHA] Verification failed error codes:', json['error-codes'] || json);
+    }
     return json.success === true;
   } catch (err) {
-    console.error('[Turnstile] Verification network error:', err.message);
+    console.error('[reCAPTCHA] Verification network error:', err.message);
     return false;
   }
 }
@@ -266,7 +274,7 @@ app.post('/api/admissions', requireXHR, formSubmitLimiter, async (req, res) => {
   } = req.body;
 
   // Captcha first — reject bots before any processing
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  const isHuman = await verifyCaptchaToken(captchaToken, req.ip);
   if (!isHuman) {
     return res.status(400).json({
       success: false,
@@ -323,7 +331,7 @@ app.post('/api/admissions', requireXHR, formSubmitLimiter, async (req, res) => {
 app.post('/api/contact', requireXHR, formSubmitLimiter, async (req, res) => {
   const { name, email, phone, message, captchaToken } = req.body;
 
-  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  const isHuman = await verifyCaptchaToken(captchaToken, req.ip);
   if (!isHuman) {
     return res.status(400).json({
       success: false,
@@ -389,44 +397,29 @@ app.post('/api/waitlist', requireXHR, formSubmitLimiter, (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 11b. COMING SOON PAGE — GET /coming-soon
-//     Renders the pre-launch landing page (Tailwind CDN + GSAP).
-//     Custom CSP is required because:
-//       • Tailwind Play CDN (cdn.tailwindcss.com) injects a <style> tag at runtime
-//         which requires 'unsafe-inline' in styleSrc (unavoidable for Tailwind CDN)
-//       • GSAP is loaded from cdnjs.cloudflare.com (already trusted domain)
-//     All our own inline <script> blocks still use per-request nonces.
-//     This route overrides Helmet's global CSP header for this page only.
+// 11. ROUTE HANDLING
+//     Always serves the Coming Soon / Pre-Launch Waitlist page.
+//     Deployed on Vercel — port branching not applicable in serverless.
 // ═══════════════════════════════════════════════════════════════════════════════
-app.get('/coming-soon', (req, res) => {
-  const nonce = res.locals.nonce;
-
-  // Override global CSP — scoped to this page only
+function setComingSoonCSP(req, res, next) {
   res.setHeader('Content-Security-Policy', [
     `default-src 'self'`,
-    // Tailwind CDN + GSAP cdnjs — our inline scripts are nonce-gated
-    `script-src 'self' 'nonce-${nonce}' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com`,
-    // Tailwind CDN injects a <style> tag without a nonce — unsafe-inline required
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.gstatic.com`,
     `font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com`,
     `img-src 'self' data: https://*`,
-    `connect-src 'self'`,
-    `frame-src 'none'`,
+    `connect-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/`,
+    `frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
     `frame-ancestors 'none'`,
   ].join('; '));
+  next();
+}
 
-  res.render('coming-soon', { nonce });
-});
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 11. CATCH-ALL: Render EJS page
-//    Passes nonce (already in res.locals) and siteKey to the EJS template.
-// ═══════════════════════════════════════════════════════════════════════════════
-app.get('*', (req, res) => {
-  res.render('index', { siteKey: TURNSTILE_SITE_KEY });
+app.get('*', setComingSoonCSP, (req, res) => {
+  res.render('coming-soon', { nonce: res.locals.nonce });
 });
 
 

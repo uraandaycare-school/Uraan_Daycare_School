@@ -9,22 +9,22 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <!-- SEO Meta Tags -->
-  <title>Uraan Montessori &amp; Daycare | Karachi Pre-Launch Waitlist</title>
-  <meta name="description" content="Join the VIP waitlist for Uraan Montessori &amp; Daycare in Karachi, Pakistan. Experience premium early childhood education with live CCTV access, biometric security, and certified Montessori mentors.">
-  <meta name="keywords" content="daycare karachi, montessori karachi, school karachi, child care karachi, best playgroup karachi, kids school karachi, coming soon">
+  <title>Uraan Daycare &amp; Montessori | Karachi Pre-Launch VIP Waitlist</title>
+  <meta name="description" content="Join the exclusive pre-launch VIP waitlist for Uraan Daycare &amp; Montessori School in Karachi, Pakistan. 24/7 Live CCTV streaming, biometric security, pediatric care, and authentic Montessori early learning.">
+  <meta name="keywords" content="daycare karachi, montessori karachi, school karachi, child care karachi, best playgroup karachi, kids school karachi, gulshan daycare, clifton daycare">
   <meta name="author" content="Uraan Daycare &amp; School">
   <meta name="robots" content="index, follow">
 
   <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="Uraan Montessori &amp; Daycare | Karachi Pre-Launch Waitlist">
-  <meta property="og:description" content="Karachi's premier safe sanctuary for early learning is coming soon. Secure your child's priority enrollment spot today.">
+  <meta property="og:title" content="Uraan Daycare &amp; Montessori | Karachi Pre-Launch Waitlist">
+  <meta property="og:description" content="Karachi's safest early childhood learning sanctuary is launching soon. Secure your child's priority enrollment slot today.">
   <meta property="og:image" content="/assets/Uraan.jpeg">
   <meta property="og:type" content="website">
 
   <!-- Favicon / Title Bar Mini Logo -->
   <link rel="icon" type="image/png" href="/assets/U.png">
 
-  <!-- Font Awesome -->
+  <!-- Font Awesome 6 -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -39,7 +39,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script nonce="<%= nonce %>" src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP & ScrollTrigger CDN -->
+  <script nonce="<%= nonce %>" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script nonce="<%= nonce %>" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <!-- Tailwind Configuration -->
   <script nonce="<%= nonce %>">
@@ -78,16 +82,19 @@
             body: ['Nunito', 'Plus Jakarta Sans', 'sans-serif'],
           },
           boxShadow: {
-            premium: '0 10px 30px -10px rgba(15, 41, 74, 0.08)',
-            premiumHover: '0 20px 45px -15px rgba(15, 41, 74, 0.15)',
-            glowPink: '0 8px 24px -6px rgba(233, 30, 99, 0.4)',
+            premium: '0 12px 36px -10px rgba(15, 41, 74, 0.09)',
+            premiumHover: '0 24px 50px -15px rgba(15, 41, 74, 0.18)',
+            glowPink: '0 10px 30px -5px rgba(233, 30, 99, 0.45)',
+            glowYellow: '0 10px 30px -5px rgba(255, 179, 0, 0.45)',
+            glowGreen: '0 10px 30px -5px rgba(76, 175, 80, 0.45)',
+            glowBlue: '0 10px 30px -5px rgba(33, 150, 243, 0.45)',
           }
         }
       }
     }
   </script>
 
-  <!-- GSAP Core and ScrollTrigger -->
+  <!-- GSAP Core & ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
@@ -104,7 +111,20 @@
       font-family: 'Fredoka', sans-serif;
     }
 
-    /* Custom Scrollbar */
+    /* Vibrant Gradient Brand Text */
+    .gradient-text-brand {
+      background: linear-gradient(135deg, #E91E63 0%, #FFB300 45%, #4CAF50 85%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-text-pink {
+      background: linear-gradient(135deg, #E91E63 0%, #D81B60 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom Glassmorphism Scrollbar */
     ::-webkit-scrollbar {
       width: 10px;
     }
@@ -119,35 +139,20 @@
       background: #90CAF9;
     }
 
-    /* Performance optimization classes */
     .gpu-accel {
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
       perspective: 1000px;
     }
 
-    .will-animate-transform {
-      will-change: transform;
-    }
-
-    .will-animate-opacity {
-      will-change: opacity;
-    }
-
-    .will-animate-both {
-      will-change: transform, opacity;
-    }
-
-    /* Floating shapes styling */
     .floating-shape {
       pointer-events: none;
       position: absolute;
-      opacity: 0.15;
+      opacity: 0.28;
     }
 
-    /* Vision Tour layout fixes */
     .tour-card {
-      opacity: 0.3;
+      opacity: 0.35;
       transform: translateY(30px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
@@ -160,19 +165,20 @@
     /* Toast Notification styles */
     .toast-container {
       position: fixed;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
     }
     .coming-soon-toast {
       background: white;
-      border-radius: 16px;
-      padding: 16px 24px;
-      box-shadow: 0 20px 40px rgba(15, 41, 74, 0.15);
+      border-radius: 20px;
+      padding: 16px 28px;
+      box-shadow: 0 25px 50px rgba(15, 41, 74, 0.2);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
       animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     @keyframes slideUp {
@@ -180,7 +186,7 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
-    /* Marquee Animation */
+    /* Infinite Marquee */
     @keyframes marquee {
       0% { transform: translate3d(0, 0, 0); }
       100% { transform: translate3d(-50%, 0, 0); }
@@ -188,95 +194,170 @@
     .animate-marquee {
       display: flex;
       width: max-content;
-      animation: marquee 28s linear infinite;
+      animation: marquee 25s linear infinite;
     }
     .animate-marquee:hover {
       animation-play-state: paused;
     }
+
+    /* Floating WhatsApp Button */
+    .wa-float {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 90;
+      background-color: #25D366;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .wa-float:hover {
+      transform: scale(1.1) rotate(6deg);
+      box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6);
+    }
+
+    /* Slow pulse for glowing background mesh */
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.12); opacity: 0.45; }
+    }
+    .animate-glow-mesh {
+      animation: pulseGlow 8s ease-in-out infinite;
+    }
   </style>
 </head>
-<body class="bg-sky text-navy selection:bg-pink-light selection:text-pink">
+<body class="bg-gradient-to-b from-sky via-sky-light to-white text-navy selection:bg-pink-light selection:text-pink">
 
-  <!-- Header -->
-  <header class="w-full py-6 px-8 relative z-50">
+  <!-- Floating WhatsApp Quick Connect Button -->
+  <a
+    href="https://wa.me/923368334441?text=Assalamu%20Alaikum!%20I%20would%20like%20to%20inquire%20about%20the%20Uraan%20Daycare%20pre-launch%20waitlist."
+    target="_blank"
+    rel="noopener noreferrer"
+    class="wa-float"
+    aria-label="Chat on WhatsApp with Campus Registrar"
+    title="Chat with Registrar on WhatsApp"
+  >
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Navigation Header -->
+  <header class="w-full py-4 px-6 md:px-12 relative z-50 bg-white/80 backdrop-blur-lg border-b border-white/60 sticky top-0 transition-all shadow-sm">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <!-- Brand Logo Image -->
+      
+      <!-- Brand Logo -->
+      <a href="#hero-section" class="flex items-center gap-0.5 group">
         <img
           src="/assets/U.png"
           alt="Uraan Logo"
-          class="w-12 h-12 flex-shrink-0 object-contain transition-all duration-300 hover:rotate-[-5deg] hover:scale-[1.08]"
+          class="w-10 h-10 flex-shrink-0 object-contain transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-110"
         >
-        <span class="text-2xl font-bold font-title tracking-tight text-navy">
-          <span class="text-navy">U</span><span class="text-pink">r</span><span class="text-yellow">a</span><span class="text-blue-500">a</span><span class="text-green">n</span>
-          <span class="text-sm font-body font-semibold block text-navy/70 -mt-1">Daycare &amp; Montessori</span>
+        <span class="text-2xl font-bold font-title tracking-tight text-navy leading-none">
+          <span class="text-pink">r</span><span class="text-yellow">a</span><span class="text-blue-500">a</span><span class="text-green">n</span>
+          <span class="text-[11px] font-body font-bold block text-navy/70 tracking-normal mt-0.5">Daycare &amp; Montessori</span>
         </span>
-      </div>
-      <div class="flex items-center gap-4">
-        <a href="#waitlist-section" class="bg-navy text-white hover:bg-navy-light px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-premium hover:shadow-premiumHover">
-          Join Waitlist
+      </a>
+
+      <!-- Header Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 font-title font-semibold text-sm text-navy/80">
+        <a href="#vision-tour" class="hover:text-pink transition-colors">Why Uraan</a>
+        <a href="#estimator-section" class="hover:text-yellow-hover transition-colors">Slot Calculator</a>
+        <a href="#programs-preview" class="hover:text-green transition-colors">Programs</a>
+        <a href="#coming-soon" class="hover:text-pink transition-colors">Safety 24/7</a>
+        <a href="#faq-section" class="hover:text-navy transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Action Button -->
+      <div class="flex items-center gap-3">
+        <a href="#waitlist-section" data-scroll-center="waitlist-section" class="bg-gradient-to-r from-pink to-pink-hover hover:from-pink-hover hover:to-pink text-white px-5 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all shadow-glowPink hover:scale-[1.03]">
+          Apply Now
         </a>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden pt-12 pb-24">
-    <!-- Floating Abstract Shapes for Scroll Parallax -->
-    <div class="floating-shape absolute top-20 left-10 w-20 h-20 bg-pink-light rounded-full mix-blend-multiply filter blur-sm will-animate-transform gpu-accel" data-speed="0.2"></div>
-    <div class="floating-shape absolute top-40 right-20 w-32 h-32 bg-yellow-light rounded-full mix-blend-multiply filter blur-sm will-animate-transform gpu-accel" data-speed="-0.3"></div>
-    <div class="floating-shape absolute bottom-20 left-1/4 w-24 h-24 bg-green-light rounded-full mix-blend-multiply filter blur-sm will-animate-transform gpu-accel" data-speed="0.1"></div>
-    <div class="floating-shape absolute top-1/3 left-1/3 w-16 h-16 bg-sky-dark rounded-full mix-blend-multiply filter blur-sm will-animate-transform gpu-accel" data-speed="0.4"></div>
+  <section id="hero-section" class="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden pt-10 pb-20">
+    
+    <!-- Vibrant Glowing Background Orbs -->
+    <div class="absolute top-10 left-1/4 w-96 h-96 bg-pink-light rounded-full mix-blend-multiply filter blur-3xl animate-glow-mesh pointer-events-none"></div>
+    <div class="absolute top-20 right-1/4 w-96 h-96 bg-yellow-light rounded-full mix-blend-multiply filter blur-3xl animate-glow-mesh pointer-events-none"></div>
+    <div class="absolute bottom-10 left-1/3 w-80 h-80 bg-green-light rounded-full mix-blend-multiply filter blur-3xl animate-glow-mesh pointer-events-none"></div>
+
+    <!-- Parallax Shapes -->
+    <div class="floating-shape absolute top-16 left-8 w-24 h-24 bg-pink/30 rounded-full mix-blend-multiply filter blur-sm gpu-accel" data-speed="0.2"></div>
+    <div class="floating-shape absolute top-36 right-16 w-36 h-36 bg-yellow/30 rounded-full mix-blend-multiply filter blur-sm gpu-accel" data-speed="-0.3"></div>
+    <div class="floating-shape absolute bottom-16 left-1/4 w-28 h-28 bg-green/30 rounded-full mix-blend-multiply filter blur-sm gpu-accel" data-speed="0.15"></div>
+    <div class="floating-shape absolute top-1/3 left-1/3 w-20 h-20 bg-blue-400/30 rounded-full mix-blend-multiply filter blur-sm gpu-accel" data-speed="0.35"></div>
 
     <div class="max-w-4xl mx-auto relative z-10">
-      <!-- Tagline Badge -->
-      <span class="inline-block bg-white text-pink font-semibold text-xs tracking-wider uppercase px-4 py-1.5 rounded-full border border-pink/10 shadow-sm mb-6 animate-pulse">
-        🚀 Karachi's Safest Campus Pre-Registration
-      </span>
+      
+      <!-- Tagline Pill -->
+      <div class="inline-flex items-center gap-2.5 bg-white/90 backdrop-blur-md text-pink font-bold text-xs tracking-wider uppercase px-4 py-2 rounded-full border border-pink/30 shadow-glowPink mb-6">
+        <span class="w-2.5 h-2.5 rounded-full bg-pink animate-ping"></span>
+        <span>Karachi Campus Pre-Registration Open</span>
+      </div>
 
-      <!-- Heading -->
-      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-navy tracking-tight leading-[1.1] mb-6 font-title">
-        Nurturing Today, <br class="hidden md:inline">
-        <span class="text-pink">Inspiring Tomorrow.</span>
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-navy tracking-tight leading-[1.1] mb-6 font-title">
+        Nurturing Today, <br class="hidden sm:inline">
+        <span class="gradient-text-brand">Inspiring Tomorrow.</span>
       </h1>
 
-      <!-- Description -->
-      <p class="text-lg md:text-xl text-navy/80 max-w-2xl mx-auto leading-relaxed mb-8">
-        Karachi's premium early childhood sanctuary combining scientific Montessori education with cutting-edge 24/7 security. Launching soon in Karachi, Pakistan.
+      <!-- Subtitle -->
+      <p class="text-lg md:text-xl text-navy/80 max-w-2xl mx-auto leading-relaxed mb-8 font-medium">
+        Karachi's high-security early childhood sanctuary blending authentic Montessori education with live 24/7 CCTV parent access. Launching soon in Karachi, Pakistan.
       </p>
 
-      <!-- Countdown Timer Component -->
-      <div id="countdown" class="grid grid-cols-4 gap-4 max-w-lg mx-auto mb-12 will-animate-opacity gpu-accel" aria-label="Time remaining until launch">
-        <div class="bg-white rounded-2xl p-4 shadow-premium border border-white/40">
-          <div id="days" class="text-3xl md:text-4xl font-bold text-navy font-title">00</div>
-          <div class="text-xs text-navy/60 font-semibold uppercase tracking-wider mt-1">Days</div>
+      <!-- Colorful Live Countdown Timer -->
+      <div id="countdown" class="grid grid-cols-4 gap-3 sm:gap-4 max-w-lg mx-auto mb-10 gpu-accel">
+        
+        <!-- Days -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-premium border-t-4 border-pink border-x border-b border-white/80 transition-transform hover:-translate-y-1">
+          <div id="days" class="text-3xl md:text-4xl font-bold text-pink font-title">00</div>
+          <div class="text-[10px] sm:text-xs text-navy/60 font-bold uppercase tracking-wider mt-1">Days</div>
         </div>
-        <div class="bg-white rounded-2xl p-4 shadow-premium border border-white/40">
-          <div id="hours" class="text-3xl md:text-4xl font-bold text-pink font-title">00</div>
-          <div class="text-xs text-navy/60 font-semibold uppercase tracking-wider mt-1">Hours</div>
+
+        <!-- Hours -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-premium border-t-4 border-yellow border-x border-b border-white/80 transition-transform hover:-translate-y-1">
+          <div id="hours" class="text-3xl md:text-4xl font-bold text-yellow-hover font-title">00</div>
+          <div class="text-[10px] sm:text-xs text-navy/60 font-bold uppercase tracking-wider mt-1">Hours</div>
         </div>
-        <div class="bg-white rounded-2xl p-4 shadow-premium border border-white/40">
-          <div id="minutes" class="text-3xl md:text-4xl font-bold text-yellow font-title">00</div>
-          <div class="text-xs text-navy/60 font-semibold uppercase tracking-wider mt-1">Mins</div>
+
+        <!-- Minutes -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-premium border-t-4 border-green border-x border-b border-white/80 transition-transform hover:-translate-y-1">
+          <div id="minutes" class="text-3xl md:text-4xl font-bold text-green font-title">00</div>
+          <div class="text-[10px] sm:text-xs text-navy/60 font-bold uppercase tracking-wider mt-1">Mins</div>
         </div>
-        <div class="bg-white rounded-2xl p-4 shadow-premium border border-white/40">
-          <div id="seconds" class="text-3xl md:text-4xl font-bold text-green font-title">00</div>
-          <div class="text-xs text-navy/60 font-semibold uppercase tracking-wider mt-1">Secs</div>
+
+        <!-- Seconds -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-premium border-t-4 border-blue-500 border-x border-b border-white/80 transition-transform hover:-translate-y-1">
+          <div id="seconds" class="text-3xl md:text-4xl font-bold text-blue-500 font-title">00</div>
+          <div class="text-[10px] sm:text-xs text-navy/60 font-bold uppercase tracking-wider mt-1">Secs</div>
         </div>
       </div>
 
-      <!-- Quick Waitlist Inline Form -->
-      <div id="waitlist-section" class="max-w-md mx-auto bg-white rounded-3xl p-6 md:p-8 shadow-premium border border-white/60 text-left will-animate-transform gpu-accel">
-        <h3 class="text-xl font-bold text-navy mb-4 font-title text-center">
-          Secure Your Priority Enrollment Slot
-        </h3>
-        <p class="text-sm text-navy/70 mb-6 text-center">
-          Waitlist entries receive first preference for campus tours and a lifetime 10% sibling discount.
+      <!-- Hero Waitlist Form Card with Accent Top Bar -->
+      <div id="waitlist-section" class="max-w-md mx-auto bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-premiumHover border-t-4 border-pink border-x border-b border-white/90 text-left gpu-accel">
+        <div class="mb-4">
+          <h3 class="text-xl font-bold text-navy font-title">
+            Priority VIP Enrollment
+          </h3>
+        </div>
+        
+        <p class="text-xs text-navy/70 mb-6 leading-relaxed">
+          Pre-registered families receive first preference for physical campus tours and a lifetime <strong class="text-pink">10% sibling discount</strong>.
         </p>
 
-        <form id="hero-waitlist-form" class="space-y-4" novalidate>
+        <form id="hero-waitlist-form" class="space-y-4" novalidate autocomplete="off">
           <div>
-            <label for="parent-name" class="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
+            <label for="parent-name" class="block text-[11px] font-bold uppercase tracking-wider text-navy/70 mb-1">
               Parent's Full Name <span class="text-pink">*</span>
             </label>
             <input 
@@ -284,15 +365,15 @@
               id="parent-name" 
               name="name" 
               required 
-              placeholder="e.g. Ayesha Khan" 
-              class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-1 focus:ring-pink outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30"
+              placeholder="e.g. Ayesha Siddiqui" 
+              class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-2 focus:ring-pink/20 outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30 bg-white"
             >
             <span id="parent-name-error" class="hidden text-pink text-xs font-semibold mt-1">Please enter a valid name (letters only).</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label for="parent-email" class="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
+              <label for="parent-email" class="block text-[11px] font-bold uppercase tracking-wider text-navy/70 mb-1">
                 Email Address <span class="text-pink">*</span>
               </label>
               <input 
@@ -301,13 +382,13 @@
                 name="email" 
                 required 
                 placeholder="ayesha@domain.com" 
-                class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-1 focus:ring-pink outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30"
+                class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-2 focus:ring-pink/20 outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30 bg-white"
               >
               <span id="parent-email-error" class="hidden text-pink text-xs font-semibold mt-1">Invalid email address.</span>
             </div>
             <div>
-              <label for="parent-phone" class="block text-xs font-bold uppercase tracking-wider text-navy/70 mb-1">
-                WhatsApp Number <span class="text-pink">*</span>
+              <label for="parent-phone" class="block text-[11px] font-bold uppercase tracking-wider text-navy/70 mb-1">
+                WhatsApp Mobile <span class="text-pink">*</span>
               </label>
               <input 
                 type="tel" 
@@ -315,17 +396,17 @@
                 name="phone" 
                 required 
                 placeholder="03XXXXXXXXX" 
-                class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-1 focus:ring-pink outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30"
+                class="w-full px-4 py-3 rounded-xl border border-navy/10 focus:border-pink focus:ring-2 focus:ring-pink/20 outline-none transition-all text-sm text-navy font-semibold placeholder:text-navy/30 bg-white"
               >
-              <span id="parent-phone-error" class="hidden text-pink text-xs font-semibold mt-1">Pakistani format required (03xxxxxxxxx).</span>
+              <span id="parent-phone-error" class="hidden text-pink text-xs font-semibold mt-1">Pakistani format (03xxxxxxxxx).</span>
             </div>
           </div>
 
           <button 
             type="submit" 
-            class="w-full bg-pink hover:bg-pink-hover text-white py-3.5 px-6 rounded-xl font-bold tracking-wide transition-all shadow-glowPink hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+            class="w-full bg-gradient-to-r from-pink to-pink-hover hover:from-pink-hover hover:to-pink text-white py-3.5 px-6 rounded-2xl font-bold tracking-wide transition-all shadow-glowPink hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
           >
-            <span>Reserve Priority Space</span>
+            <span>Apply Now</span>
             <i class="fas fa-arrow-right text-xs"></i>
           </button>
         </form>
@@ -334,10 +415,9 @@
     </div>
   </section>
 
-  <!-- Interactive Security & Highlight Marquee -->
-  <div class="bg-navy py-4 overflow-hidden relative z-20 shadow-md">
+  <!-- Vibrant Multi-Color Ticker Strip -->
+  <div class="bg-gradient-to-r from-navy via-navy-light to-navy-dark py-4 overflow-hidden relative z-20 shadow-md border-y border-white/10">
     <div class="flex items-center gap-16 whitespace-nowrap animate-marquee" id="safety-ticker">
-      <!-- Left to right scrolling text -->
       <div class="flex items-center gap-12 text-white/95 font-semibold text-sm tracking-wide">
         <span><i class="fas fa-shield-halved text-pink mr-2"></i> Karachi's Only Daycare with 24/7 CCTV Parent Streaming</span>
         <span><i class="fas fa-fingerprint text-yellow mr-2"></i> Biometric Restrictive Smart Gate Access Control</span>
@@ -355,85 +435,102 @@
     </div>
   </div>
 
-  <!-- Stats Grid -->
-  <section class="py-24 px-6 max-w-7xl mx-auto relative z-10">
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 text-center" id="stats-section">
-      <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/60 shadow-premium hover:shadow-premiumHover transition-all duration-300 transform will-animate-both gpu-accel stat-card">
-        <div class="w-12 h-12 bg-pink-light text-pink rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-          <i class="fas fa-camera"></i>
+  <!-- Key Metrics Stats Section with Color-Coded Accent Borders -->
+  <section class="py-20 px-6 max-w-7xl mx-auto relative z-10">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8 text-center" id="stats-section">
+      
+      <!-- Stat 1: Pink -->
+      <div class="bg-gradient-to-br from-pink-light/60 via-white to-white rounded-3xl p-6 border-t-4 border-pink border-x border-b border-white/80 shadow-premium hover:shadow-glowPink transition-all transform hover:-translate-y-1 stat-card">
+        <div class="w-12 h-12 bg-pink text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl shadow-glowPink">
+          <i class="fas fa-video"></i>
         </div>
-        <div class="text-4xl md:text-5xl font-bold text-navy font-title tracking-tight mb-2">24/7</div>
-        <div class="text-sm text-navy/70 font-semibold uppercase tracking-wider">CCTV Access</div>
+        <div class="text-3xl md:text-5xl font-bold text-navy font-title tracking-tight mb-1">24/7</div>
+        <div class="text-xs text-pink-hover font-bold uppercase tracking-wider">Parent HD Streaming</div>
       </div>
-      <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/60 shadow-premium hover:shadow-premiumHover transition-all duration-300 transform will-animate-both gpu-accel stat-card">
-        <div class="w-12 h-12 bg-yellow-light text-yellow rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-          <i class="fas fa-users"></i>
+
+      <!-- Stat 2: Yellow -->
+      <div class="bg-gradient-to-br from-yellow-light/60 via-white to-white rounded-3xl p-6 border-t-4 border-yellow border-x border-b border-white/80 shadow-premium hover:shadow-glowYellow transition-all transform hover:-translate-y-1 stat-card">
+        <div class="w-12 h-12 bg-yellow text-navy rounded-full flex items-center justify-center mx-auto mb-3 text-xl shadow-glowYellow">
+          <i class="fas fa-users-viewfinder"></i>
         </div>
-        <div class="text-4xl md:text-5xl font-bold text-navy font-title tracking-tight mb-2" id="stat-ratio">1:4</div>
-        <div class="text-sm text-navy/70 font-semibold uppercase tracking-wider">Nanny Ratio</div>
+        <div class="text-3xl md:text-5xl font-bold text-navy font-title tracking-tight mb-1">1 : 4</div>
+        <div class="text-xs text-yellow-hover font-bold uppercase tracking-wider">Care Ratio</div>
       </div>
-      <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/60 shadow-premium hover:shadow-premiumHover transition-all duration-300 transform will-animate-both gpu-accel stat-card">
-        <div class="w-12 h-12 bg-green-light text-green rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-          <i class="fas fa-graduation-cap"></i>
+
+      <!-- Stat 3: Green -->
+      <div class="bg-gradient-to-br from-green-light/60 via-white to-white rounded-3xl p-6 border-t-4 border-green border-x border-b border-white/80 shadow-premium hover:shadow-glowGreen transition-all transform hover:-translate-y-1 stat-card">
+        <div class="w-12 h-12 bg-green text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl shadow-glowGreen">
+          <i class="fas fa-certificate"></i>
         </div>
-        <div class="text-4xl md:text-5xl font-bold text-navy font-title tracking-tight mb-2" id="stat-edu">100%</div>
-        <div class="text-sm text-navy/70 font-semibold uppercase tracking-wider">Montessori Certified</div>
+        <div class="text-3xl md:text-5xl font-bold text-navy font-title tracking-tight mb-1">100%</div>
+        <div class="text-xs text-green-hover font-bold uppercase tracking-wider">Montessori Mentors</div>
       </div>
-      <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/60 shadow-premium hover:shadow-premiumHover transition-all duration-300 transform will-animate-both gpu-accel stat-card">
-        <div class="w-12 h-12 bg-sky-dark/30 text-navy-light rounded-full flex items-center justify-center mx-auto mb-4 text-xl">
-          <i class="fas fa-shield-halved"></i>
+
+      <!-- Stat 4: Blue -->
+      <div class="bg-gradient-to-br from-sky-light/80 via-white to-white rounded-3xl p-6 border-t-4 border-blue-500 border-x border-b border-white/80 shadow-premium hover:shadow-glowBlue transition-all transform hover:-translate-y-1 stat-card">
+        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl shadow-glowBlue">
+          <i class="fas fa-shield-heart"></i>
         </div>
-        <div class="text-4xl md:text-5xl font-bold text-navy font-title tracking-tight mb-2" id="stat-safety">5★</div>
-        <div class="text-sm text-navy/70 font-semibold uppercase tracking-wider">Safety Rating</div>
+        <div class="text-3xl md:text-5xl font-bold text-navy font-title tracking-tight mb-1">5 ★</div>
+        <div class="text-xs text-blue-600 font-bold uppercase tracking-wider">Sanctuary Audit</div>
       </div>
+
     </div>
   </section>
 
-  <!-- Pinned Scroll-Driven Vision Tour -->
-  <section class="relative bg-white/40 border-y border-white/60 py-24 px-6 overflow-hidden" id="vision-tour">
+  <!-- Pinned Scroll Vision Tour -->
+  <section class="relative bg-gradient-to-b from-white/70 via-sky-light/50 to-white/70 border-y border-white/80 py-24 px-6" id="vision-tour">
     <div class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs font-bold text-pink bg-pink-light uppercase tracking-widest px-4 py-1.5 rounded-full mb-3 inline-block shadow-sm">The Uraan Edge</span>
+        <h2 class="text-3xl md:text-5xl font-bold text-navy tracking-tight font-title">
+          Three Pillars of Excellence
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         
-        <!-- Left Side: Pinned Interactive Illustration / Media Window -->
-        <div class="lg:sticky lg:top-24 w-full h-[300px] md:h-[450px] bg-white rounded-[32px] overflow-hidden shadow-premium border border-white/80 relative flex items-center justify-center gpu-accel will-animate-transform" id="tour-visual-panel">
-          <!-- Colorful backdrop circles -->
-          <div class="absolute w-72 h-72 rounded-full bg-pink opacity-25 filter blur-3xl transition-colors duration-700" id="tour-bg-glow"></div>
-          
-          <!-- Large Dynamic Icon representation -->
-          <div class="relative z-10 text-center px-8 transition-all duration-500 transform scale-100 will-animate-both" id="tour-visual-content">
-            <i class="fas fa-shield-halved text-8xl text-navy mb-6 transition-all duration-500" id="tour-icon"></i>
-            <h3 class="text-2xl font-bold font-title text-navy transition-all duration-500" id="tour-visual-title">Safe Sanctuary</h3>
-            <p class="text-navy/70 mt-2 max-w-xs mx-auto text-sm" id="tour-visual-desc">Karachi's most fortified child learning space.</p>
+        <!-- Left Side: Sticky Visual Panel — sits inside a full-height column so sticky works past all 3 pillars -->
+        <div class="hidden lg:block" style="align-self: stretch;">
+          <div class="sticky top-28 w-full h-[440px] bg-white rounded-[32px] shadow-premium border-2 border-white relative flex items-center justify-center gpu-accel" id="tour-visual-panel">
+            <div class="absolute w-72 h-72 rounded-full bg-pink opacity-25 filter blur-3xl transition-colors duration-700" id="tour-bg-glow"></div>
+            
+            <div class="relative z-10 text-center px-8 transition-all duration-500 transform scale-100" id="tour-visual-content">
+              <i class="fas fa-shield-halved text-8xl text-navy mb-6 transition-all duration-500" id="tour-icon"></i>
+              <h3 class="text-2xl font-bold font-title text-navy transition-all duration-500" id="tour-visual-title">Uncompromising Security</h3>
+              <p class="text-navy/70 mt-2 max-w-xs mx-auto text-sm leading-relaxed" id="tour-visual-desc">Karachi's most fortified child learning space.</p>
+            </div>
           </div>
         </div>
 
         <!-- Right Side: Scroll Content Cards -->
-        <div class="space-y-16 lg:space-y-32 py-12" id="tour-cards-container">
+        <div class="space-y-16 lg:space-y-28 py-6" id="tour-cards-container">
           
-          <!-- Card 1 -->
-          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border border-white/80 shadow-premium active-card will-animate-both" data-index="0" data-color="rgba(233, 30, 99, 0.25)" data-icon="fa-shield-halved" data-title="Safe Sanctuary" data-desc="Karachi's most fortified child learning space with biometric access doors and parent-streaming live cameras.">
-            <span class="text-xs font-bold text-pink uppercase tracking-widest block mb-2">Pillar 01</span>
-            <h4 class="text-2xl font-bold text-navy font-title mb-4">Uncompromising Security</h4>
-            <p class="text-navy/80 leading-relaxed">
-              We understand that safety is your primary priority. Our campus is built to international safety standards, featuring child-proofed magnetic door locks, real-time emergency exits, 24/7 video backup, and instant notification system alerts via mobile.
+          <!-- Card 1: Pink Accent -->
+          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border-t-4 border-pink border-x border-b border-white/90 shadow-premium active-card" data-index="0" data-color="rgba(233, 30, 99, 0.25)" data-icon="fa-shield-halved" data-title="Uncompromising Security" data-desc="Biometric smart access, parent live camera streaming, and instant SMS alerts.">
+            <span class="text-xs font-bold text-pink bg-pink-light px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-3">Pillar 01</span>
+            <h3 class="text-2xl font-bold text-navy font-title mb-4">Fortified Campus Safety</h3>
+            <p class="text-navy/80 leading-relaxed text-sm md:text-base">
+              Child safety is our foundation. Built to international standards with biometric gate control, real-time parent camera streams, pediatric first aid staff, and child-proof emergency exits.
             </p>
           </div>
 
-          <!-- Card 2 -->
-          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border border-white/80 shadow-premium will-animate-both" data-index="1" data-color="rgba(255, 179, 0, 0.25)" data-icon="fa-puzzle-piece" data-title="Active Discovery" data-desc="Real Montessori certified materials, tactile tasks, and child-led paces.">
-            <span class="text-xs font-bold text-yellow uppercase tracking-widest block mb-2">Pillar 02</span>
-            <h4 class="text-2xl font-bold text-navy font-title mb-4">Scientific Montessori Method</h4>
-            <p class="text-navy/80 leading-relaxed">
-              No rote learning or forced drills. Children choose materials specifically prepared to cultivate coordination, language, mathematics, and independent life-skills, guided by highly trained certified Montessori mentors.
+          <!-- Card 2: Yellow Accent -->
+          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border-t-4 border-yellow border-x border-b border-white/90 shadow-premium" data-index="1" data-color="rgba(255, 179, 0, 0.25)" data-icon="fa-shapes" data-title="Montessori Pedagogy" data-desc="Real tactile learning modules, self-paced discovery, and language enrichment.">
+            <span class="text-xs font-bold text-navy bg-yellow-light px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-3">Pillar 02</span>
+            <h3 class="text-2xl font-bold text-navy font-title mb-4">Scientific Montessori Method</h3>
+            <p class="text-navy/80 leading-relaxed text-sm md:text-base">
+              No repetitive mechanical drills. Children select specialized tactile sensory materials to naturally develop concentration, practical life habits, early mathematics, and phonics.
             </p>
           </div>
 
-          <!-- Card 3 -->
-          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border border-white/80 shadow-premium will-animate-both" data-index="2" data-color="rgba(76, 175, 80, 0.25)" data-icon="fa-seedling" data-title="Joyful Growth" data-desc="Pediatrician-certified meals, first-aid trained caretakers, and creative play areas.">
-            <span class="text-xs font-bold text-green uppercase tracking-widest block mb-2">Pillar 03</span>
-            <h4 class="text-2xl font-bold text-navy font-title mb-4">Holistic Nurturing</h4>
-            <p class="text-navy/80 leading-relaxed">
-              From organic, customized meal preparations to daily physical milestones tracked under resident medical staff, Uraan is built to act as an extension of your home environment, fostering physical and emotional well-being.
+          <!-- Card 3: Green Accent -->
+          <div class="tour-card bg-white rounded-3xl p-8 md:p-10 border-t-4 border-green border-x border-b border-white/90 shadow-premium" data-index="2" data-color="rgba(76, 175, 80, 0.25)" data-icon="fa-seedling" data-title="Corporate Care" data-desc="Extended timing windows, hot nutritious lunches, and soothing quiet napping bays.">
+            <span class="text-xs font-bold text-green-hover bg-green-light px-3 py-1 rounded-full uppercase tracking-widest inline-block mb-3">Pillar 03</span>
+            <h3 class="text-2xl font-bold text-navy font-title mb-4">Full Corporate Care Integration</h3>
+            <p class="text-navy/80 leading-relaxed text-sm md:text-base">
+              Aligned with Karachi's business hours. We provide organic cooked meals, afternoon nap suites, and after-school homework supervision so working parents have total peace of mind.
             </p>
           </div>
 
@@ -441,177 +538,290 @@
 
       </div>
     </div>
+
   </section>
 
-  <!-- Programs Preview Grid -->
-  <section class="py-24 px-6 max-w-7xl mx-auto relative z-10" id="programs-preview">
+  <!-- Interactive Program Slot Estimator -->
+  <section id="estimator-section" class="py-24 px-6 max-w-7xl mx-auto relative z-10">
     <div class="text-center max-w-2xl mx-auto mb-16">
+      <span class="text-xs font-bold text-navy bg-yellow-light uppercase tracking-widest px-4 py-1.5 rounded-full mb-3 inline-block shadow-sm">Interactive Tool</span>
       <h2 class="text-3xl md:text-5xl font-bold text-navy tracking-tight font-title mb-4">
-        Tailored Early Learning Programs
+        Customize Your Child's Track
       </h2>
-      <p class="text-navy/80 leading-relaxed">
-        Designed for children ages 3 months to 6 years, with specific curriculums tailored to critical cognitive milestones.
+      <p class="text-navy/80 text-sm md:text-base leading-relaxed">
+        Select your child's age group to inspect recommended program schedules and key developmental perks.
       </p>
     </div>
 
+    <div class="bg-white/95 backdrop-blur-xl rounded-[36px] p-6 md:p-10 shadow-premiumHover border border-white max-w-4xl mx-auto">
+      
+      <!-- Track Buttons -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8" id="estimator-buttons">
+        <button type="button" data-track="infant" class="track-btn active bg-gradient-to-r from-pink to-pink-hover text-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all shadow-glowPink">
+          Baby Haven (3-12m)
+        </button>
+        <button type="button" data-track="toddler" class="track-btn bg-white/80 text-navy hover:bg-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all border border-navy/10">
+          Playgroup (1-2.5y)
+        </button>
+        <button type="button" data-track="junior" class="track-btn bg-white/80 text-navy hover:bg-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all border border-navy/10">
+          Junior Mont. (2.5-4y)
+        </button>
+        <button type="button" data-track="senior" class="track-btn bg-white/80 text-navy hover:bg-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all border border-navy/10">
+          Senior Mont. (4-6y)
+        </button>
+      </div>
+
+      <!-- Result Card -->
+      <div id="estimator-result" class="bg-gradient-to-r from-sky-light via-white to-pink-light/30 rounded-3xl p-6 md:p-8 border border-sky-dark/40 flex flex-col md:flex-row gap-8 items-center justify-between shadow-sm">
+        <div class="space-y-3 text-left">
+          <span id="est-badge" class="text-xs font-bold text-pink bg-pink-light px-3.5 py-1 rounded-full uppercase tracking-wider">Infant Special Care</span>
+          <h3 id="est-title" class="text-2xl font-bold text-navy font-title">Infant Haven Nursery Track</h3>
+          <p id="est-desc" class="text-sm text-navy/80 leading-relaxed max-w-lg">
+            Dedicated sterile sleeping suite, 1:2 nanny ratio, sensory stimulation toys, and mobile app infant log feed.
+          </p>
+          <div class="flex items-center gap-4 text-xs font-bold text-navy/70 pt-2" id="est-pills">
+            <span><i class="fas fa-clock text-pink mr-1.5"></i> 8:00 AM – 6:30 PM</span>
+            <span><i class="fas fa-utensils text-yellow-hover mr-1.5"></i> Customized Feeding</span>
+          </div>
+        </div>
+
+        <a href="#waitlist-section" data-scroll-center="waitlist-section" class="bg-gradient-to-r from-pink to-pink-hover text-white font-bold py-3.5 px-6 rounded-2xl text-sm whitespace-nowrap transition-all shadow-glowPink hover:scale-[1.03] flex-shrink-0">
+          Select This Track
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Programs Overview Cards Grid with Gradient Icon Circles -->
+  <section class="py-16 px-6 max-w-7xl mx-auto relative z-10" id="programs-preview">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Card 1 -->
-      <div class="bg-white/80 backdrop-blur-md rounded-[32px] p-8 border border-white/60 shadow-premium hover:shadow-premiumHover hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between gpu-accel will-animate-both program-preview-card">
+      
+      <!-- Card 1: Pink Theme -->
+      <div class="bg-white/90 backdrop-blur-md rounded-[32px] p-8 border-t-4 border-pink border-x border-b border-white/80 shadow-premium hover:shadow-glowPink hover:-translate-y-1.5 transition-all flex flex-col justify-between program-preview-card">
         <div>
-          <div class="w-12 h-12 bg-pink-light text-pink rounded-2xl flex items-center justify-center mb-6 text-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-pink to-pink-hover text-white rounded-2xl flex items-center justify-center mb-6 text-lg shadow-glowPink">
             <i class="fas fa-baby"></i>
           </div>
           <h3 class="text-xl font-bold text-navy font-title mb-2">Infant Haven</h3>
           <p class="text-navy/70 text-sm leading-relaxed mb-6">
-            Ages: 3 to 12 months. Dedicated sterile nursery, 1:2 nanny ratio, and customized feeding plans.
+            Ages 3 to 12 months. Sterile nursery, 1:2 care ratio, and customized infant sleep schedule.
           </p>
         </div>
-        <span class="text-xs font-bold text-pink bg-pink-light px-3.5 py-1.5 rounded-full inline-block self-start">Daycare Included</span>
+        <span class="text-xs font-bold text-pink bg-pink-light px-3.5 py-1.5 rounded-2xl inline-block self-start">Daycare Included</span>
       </div>
 
-      <!-- Card 2 -->
-      <div class="bg-white/80 backdrop-blur-md rounded-[32px] p-8 border border-white/60 shadow-premium hover:shadow-premiumHover hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between gpu-accel will-animate-both program-preview-card">
+      <!-- Card 2: Yellow Theme -->
+      <div class="bg-white/90 backdrop-blur-md rounded-[32px] p-8 border-t-4 border-yellow border-x border-b border-white/80 shadow-premium hover:shadow-glowYellow hover:-translate-y-1.5 transition-all flex flex-col justify-between program-preview-card">
         <div>
-          <div class="w-12 h-12 bg-yellow-light text-yellow rounded-2xl flex items-center justify-center mb-6 text-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-yellow to-yellow-hover text-navy rounded-2xl flex items-center justify-center mb-6 text-lg shadow-glowYellow">
             <i class="fas fa-child-reaching"></i>
           </div>
           <h3 class="text-xl font-bold text-navy font-title mb-2">Toddler Playgroup</h3>
           <p class="text-navy/70 text-sm leading-relaxed mb-6">
-            Ages: 1 to 2.5 years. Focuses on language expansion, sensory integration, and gross motor exercises.
+            Ages 1 to 2.5 years. Speech development, tactile play, and fine motor movement exercises.
           </p>
         </div>
-        <span class="text-xs font-bold text-yellow bg-yellow-light px-3.5 py-1.5 rounded-full inline-block self-start">Active Discovery</span>
+        <span class="text-xs font-bold text-yellow-hover bg-yellow-light px-3.5 py-1.5 rounded-2xl inline-block self-start">Sensory Discovery</span>
       </div>
 
-      <!-- Card 3 -->
-      <div class="bg-white/80 backdrop-blur-md rounded-[32px] p-8 border border-white/60 shadow-premium hover:shadow-premiumHover hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between gpu-accel will-animate-both program-preview-card">
+      <!-- Card 3: Green Theme -->
+      <div class="bg-white/90 backdrop-blur-md rounded-[32px] p-8 border-t-4 border-green border-x border-b border-white/80 shadow-premium hover:shadow-glowGreen hover:-translate-y-1.5 transition-all flex flex-col justify-between program-preview-card">
         <div>
-          <div class="w-12 h-12 bg-green-light text-green rounded-2xl flex items-center justify-center mb-6 text-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-green to-green-hover text-white rounded-2xl flex items-center justify-center mb-6 text-lg shadow-glowGreen">
             <i class="fas fa-shapes"></i>
           </div>
           <h3 class="text-xl font-bold text-navy font-title mb-2">Junior Montessori</h3>
           <p class="text-navy/70 text-sm leading-relaxed mb-6">
-            Ages: 2.5 to 4 years. Interactive math, writing preparation, and practical life exercises.
+            Ages 2.5 to 4 years. Early mathematics, writing foundations, and practical life activities.
           </p>
         </div>
-        <span class="text-xs font-bold text-green bg-green-light px-3.5 py-1.5 rounded-full inline-block self-start">Certified Curriculum</span>
+        <span class="text-xs font-bold text-green-hover bg-green-light px-3.5 py-1.5 rounded-2xl inline-block self-start">Certified Mentors</span>
       </div>
 
-      <!-- Card 4 -->
-      <div class="bg-white/80 backdrop-blur-md rounded-[32px] p-8 border border-white/60 shadow-premium hover:shadow-premiumHover hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between gpu-accel will-animate-both program-preview-card">
+      <!-- Card 4: Sky Blue Theme -->
+      <div class="bg-white/90 backdrop-blur-md rounded-[32px] p-8 border-t-4 border-blue-500 border-x border-b border-white/80 shadow-premium hover:shadow-glowBlue hover:-translate-y-1.5 transition-all flex flex-col justify-between program-preview-card">
         <div>
-          <div class="w-12 h-12 bg-sky-dark/30 text-navy rounded-2xl flex items-center justify-center mb-6 text-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-navy text-white rounded-2xl flex items-center justify-center mb-6 text-lg shadow-glowBlue">
             <i class="fas fa-book-open"></i>
           </div>
           <h3 class="text-xl font-bold text-navy font-title mb-2">Senior Montessori</h3>
           <p class="text-navy/70 text-sm leading-relaxed mb-6">
-            Ages: 4 to 6 years. Advanced language phonics, arithmetic structures, and cultural discoveries.
+            Ages 4 to 6 years. Advanced phonics, geography, arithmetic structures, and school readiness.
           </p>
         </div>
-        <span class="text-xs font-bold text-navy-light bg-sky-dark/30 px-3.5 py-1.5 rounded-full inline-block self-start">School Prep</span>
+        <span class="text-xs font-bold text-blue-600 bg-sky-light px-3.5 py-1.5 rounded-2xl inline-block self-start">School Prep</span>
       </div>
+
     </div>
   </section>
 
-  <!-- Campus Safety Spotlight (Karachi focus) -->
-  <section class="bg-navy text-white py-24 px-6 relative z-10 overflow-hidden">
-    <!-- Background SVG curve details -->
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+  <!-- Interactive FAQ Accordion Section -->
+  <section id="faq-section" class="py-24 px-6 max-w-4xl mx-auto relative z-10">
+    <div class="text-center mb-14">
+      <span class="text-xs font-bold text-pink bg-pink-light uppercase tracking-widest px-4 py-1.5 rounded-full mb-3 inline-block shadow-sm">Got Questions?</span>
+      <h2 class="text-3xl md:text-5xl font-bold text-navy tracking-tight font-title">
+        Frequently Asked Questions
+      </h2>
+    </div>
 
+    <div class="space-y-4" id="faq-accordion">
+      
+      <!-- FAQ 1 -->
+      <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-white/80 shadow-sm overflow-hidden hover:border-pink/40 transition-all faq-item">
+        <button type="button" class="w-full p-6 text-left font-title font-bold text-lg text-navy flex items-center justify-between gap-4 faq-toggle">
+          <span>When will the physical Karachi campus open for tours?</span>
+          <i class="fas fa-chevron-down text-pink transition-transform duration-300"></i>
+        </button>
+        <div class="faq-content hidden px-6 pb-6 text-sm text-navy/80 leading-relaxed border-t border-navy/5 pt-4">
+          Physical campus tours for pre-registered families will begin in August 2026. Waitlist parents receive priority tour slot notifications via WhatsApp before public announcements.
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-white/80 shadow-sm overflow-hidden hover:border-yellow/40 transition-all faq-item">
+        <button type="button" class="w-full p-6 text-left font-title font-bold text-lg text-navy flex items-center justify-between gap-4 faq-toggle">
+          <span>How does the 24/7 CCTV parent streaming work?</span>
+          <i class="fas fa-chevron-down text-yellow-hover transition-transform duration-300"></i>
+        </button>
+        <div class="faq-content hidden px-6 pb-6 text-sm text-navy/80 leading-relaxed border-t border-navy/5 pt-4">
+          Each registered parent receives encrypted mobile app login credentials tied to their child’s active room and play area. You can securely view your child live from your office or home at any time.
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-white/80 shadow-sm overflow-hidden hover:border-green/40 transition-all faq-item">
+        <button type="button" class="w-full p-6 text-left font-title font-bold text-lg text-navy flex items-center justify-between gap-4 faq-toggle">
+          <span>What are the daycare operational hours for working parents?</span>
+          <i class="fas fa-chevron-down text-green transition-transform duration-300"></i>
+        </button>
+        <div class="faq-content hidden px-6 pb-6 text-sm text-navy/80 leading-relaxed border-t border-navy/5 pt-4">
+          Our Full Corporate Shift operates Monday through Saturday from 8:00 AM to 6:30 PM. Morning Montessori runs from 8:30 AM to 12:30 PM.
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-white/80 shadow-sm overflow-hidden hover:border-blue-400/40 transition-all faq-item">
+        <button type="button" class="w-full p-6 text-left font-title font-bold text-lg text-navy flex items-center justify-between gap-4 faq-toggle">
+          <span>Is there any financial deposit needed to join the VIP Waitlist?</span>
+          <i class="fas fa-chevron-down text-blue-500 transition-transform duration-300"></i>
+        </button>
+        <div class="faq-content hidden px-6 pb-6 text-sm text-navy/80 leading-relaxed border-t border-navy/5 pt-4">
+          No! Joining the VIP Waitlist is completely free and requires zero advance payment. It guarantees you priority registration rights and locks in your 10% sibling discount.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Campus Safety Spotlight in Vibrant Dark Navy with Green Badges -->
+  <section id="coming-soon" class="bg-gradient-to-b from-navy via-navy-light to-navy-dark text-white py-24 px-6 relative z-10 overflow-hidden border-t border-white/10">
     <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-      <div class="will-animate-transform gpu-accel" id="safety-spotlight-text">
-        <span class="text-pink font-semibold text-xs tracking-wider uppercase px-3 py-1 bg-pink/15 rounded-full border border-pink/20 mb-4 inline-block">
-          📍 Clifton Campus, Karachi
+      
+      <div id="safety-spotlight-text">
+        <span class="text-pink font-semibold text-xs tracking-wider uppercase px-3.5 py-1.5 bg-pink/20 rounded-full border border-pink/30 mb-4 inline-block shadow-glowPink">
+          📍 Gulshan / Clifton, Karachi
         </span>
         <h2 class="text-3xl md:text-5xl font-bold tracking-tight font-title mb-6 text-white leading-tight">
-          Pakistan's Most Secure Early Childhood Facility
+          Pakistan's Hardened Early Learning Sanctuary
         </h2>
-        <p class="text-white/80 leading-relaxed mb-6">
-          Uraan's upcoming campus is engineered for comprehensive protective care, answering the vital concerns of parents in Karachi.
+        <p class="text-white/80 leading-relaxed mb-6 text-sm md:text-base">
+          Uraan's upcoming campus is engineered for comprehensive protective care, giving corporate parents absolute peace of mind during office hours.
         </p>
         <ul class="space-y-4">
           <li class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-green text-lg"></i>
-            <span class="text-white/90">2-Factor Biometric smart locks at main and partition gates</span>
+            <i class="fas fa-check-circle text-green text-xl"></i>
+            <span class="text-white/90 font-semibold text-sm">2-Factor Biometric smart gates at all entry points</span>
           </li>
           <li class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-green text-lg"></i>
-            <span class="text-white/90">24/7 Live parent camera streaming with end-to-end encryption</span>
+            <i class="fas fa-check-circle text-green text-xl"></i>
+            <span class="text-white/90 font-semibold text-sm">24/7 Live encrypted mobile streaming for parents</span>
           </li>
           <li class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-green text-lg"></i>
-            <span class="text-white/90">Pediatric first-aid certified nurse permanently present on-site</span>
+            <i class="fas fa-check-circle text-green text-xl"></i>
+            <span class="text-white/90 font-semibold text-sm">Pediatric First-Aid certified nursing desk on duty</span>
           </li>
         </ul>
       </div>
 
-      <div class="bg-white/5 border border-white/10 rounded-[32px] p-8 md:p-10 backdrop-blur-md will-animate-transform gpu-accel" id="safety-spotlight-box">
-        <h3 class="text-2xl font-bold font-title mb-4 text-white">Join the VIP Waitlist</h3>
-        <p class="text-white/70 text-sm mb-6">
-          Pre-register today. No financial commitment required now. Reserve a high-priority placement for September 2026.
+      <!-- Secondary Waitlist Box -->
+      <div class="bg-white/10 border-t-4 border-pink border-x border-b border-white/20 rounded-[32px] p-8 md:p-10 backdrop-blur-xl shadow-2xl" id="safety-spotlight-box">
+        <h3 class="text-2xl font-bold font-title mb-3 text-white">Join the Waitlist Now</h3>
+        <p class="text-white/70 text-xs mb-6">
+          Pre-register today for zero fee. Secure a priority placement spot before public launch.
         </p>
         
-        <form id="footer-waitlist-form" class="space-y-4" novalidate>
-          <input 
-            type="text" 
-            id="footer-parent-name" 
-            name="name" 
-            required 
-            placeholder="Parent's Full Name" 
-            class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
-          >
-          <span id="footer-parent-name-error" class="hidden text-pink text-xs font-semibold mt-1">Name must only contain letters.</span>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form id="footer-waitlist-form" class="space-y-4" novalidate autocomplete="off">
+          <div>
             <input 
-              type="email" 
-              id="footer-parent-email" 
-              name="email" 
+              type="text" 
+              id="footer-parent-name" 
+              name="name" 
               required 
-              placeholder="Email Address" 
-              class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
+              placeholder="e.g. Ayesha Siddiqui" 
+              class="w-full bg-white/15 border border-white/25 rounded-2xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
             >
-            <input 
-              type="tel" 
-              id="footer-parent-phone" 
-              name="phone" 
-              required 
-              placeholder="WhatsApp Number" 
-              class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
-            >
+            <span id="footer-parent-name-error" class="hidden text-pink text-xs font-semibold mt-1">Name must contain letters only.</span>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <span id="footer-parent-email-error" class="hidden text-pink text-xs font-semibold mt-1">Invalid email.</span>
-            <span id="footer-parent-phone-error" class="hidden text-pink text-xs font-semibold mt-1">Use format: 03xxxxxxxxx</span>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <input 
+                type="email" 
+                id="footer-parent-email" 
+                name="email" 
+                required 
+                placeholder="ayesha@domain.com" 
+                class="w-full bg-white/15 border border-white/25 rounded-2xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
+              >
+              <span id="footer-parent-email-error" class="hidden text-pink text-xs font-semibold mt-1">Invalid email.</span>
+            </div>
+            <div>
+              <input 
+                type="tel" 
+                id="footer-parent-phone" 
+                name="phone" 
+                required 
+                placeholder="03XXXXXXXXX" 
+                class="w-full bg-white/15 border border-white/25 rounded-2xl px-4 py-3 outline-none text-white text-sm focus:border-pink transition-all font-semibold placeholder:text-white/40"
+              >
+              <span id="footer-parent-phone-error" class="hidden text-pink text-xs font-semibold mt-1">Use format: 03xxxxxxxxx</span>
+            </div>
           </div>
 
           <button 
             type="submit" 
-            class="w-full bg-pink hover:bg-pink-hover text-white py-3.5 px-6 rounded-xl font-bold tracking-wide transition-all shadow-glowPink hover:bg-pink-hover"
+            class="w-full bg-gradient-to-r from-pink to-pink-hover text-white py-3.5 px-6 rounded-2xl font-bold tracking-wide transition-all shadow-glowPink hover:scale-[1.01] flex items-center justify-center gap-2"
           >
-            Submit Pre-Registration
+            <span>Apply Now</span>
+            <i class="fas fa-arrow-right text-xs"></i>
           </button>
         </form>
       </div>
+
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-navy-dark text-white py-12 px-6 relative z-10 border-t border-white/5">
+  <footer class="bg-navy-dark text-white py-12 px-6 relative z-10 border-t border-white/10">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
       <div>
         <p class="text-sm font-semibold tracking-wide text-white/90">
           Uraan Daycare &amp; Montessori School
         </p>
         <p class="text-xs text-white/50 mt-1">
-          &copy; 2026 Uraan Education. All rights reserved. Clifton, Karachi, Pakistan.
+          &copy; 2026 Uraan Daycare &amp; Education. All rights reserved. Karachi, Pakistan.
         </p>
       </div>
       <div class="flex items-center gap-6">
-        <a href="https://wa.me/923000000000" class="text-white/70 hover:text-white transition-all text-xl" aria-label="Chat on WhatsApp" target="_blank" rel="noopener">
+        <a href="mailto:uraandaycare@gmail.com" class="text-white/80 hover:text-pink transition-all text-xs font-semibold flex items-center gap-1.5" aria-label="Send Email">
+          <i class="fas fa-envelope text-pink"></i>
+          <span>uraandaycare@gmail.com</span>
+        </a>
+        <a href="https://wa.me/923368334441" class="text-white/70 hover:text-white transition-all text-xl" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-whatsapp"></i>
         </a>
-        <a href="https://instagram.com/uraan.daycare" class="text-white/70 hover:text-white transition-all text-xl" aria-label="Visit Instagram" target="_blank" rel="noopener">
+        <a href="https://instagram.com" class="text-white/70 hover:text-white transition-all text-xl" aria-label="Visit Instagram" target="_blank" rel="noopener noreferrer">
           <i class="fab fa-instagram"></i>
         </a>
       </div>
@@ -621,20 +831,21 @@
   <!-- Toast Container -->
   <div id="toast-wrapper" class="toast-container" aria-live="assertive"></div>
 
-  <!-- GSAP Animation Scripts -->
+  <!-- Dynamic Scripts & Animations -->
   <script nonce="<%= nonce %>">
     document.addEventListener('DOMContentLoaded', () => {
-      // ─── REGISTER SCROLLTRIGGER ───
-      gsap.registerPlugin(ScrollTrigger);
+      
+      // ─── 1. GSAP SCROLLTRIGGER ───
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
 
-      // Normalize scroll settings for premium mobile feel
-      ScrollTrigger.config({
-        limitCallbacks: true,
-        ignoreMobileResize: true
-      });
-      ScrollTrigger.normalizeScroll(true);
+        ScrollTrigger.config({
+          limitCallbacks: true,
+          ignoreMobileResize: true
+        });
+      }
 
-      // ─── 1. HERO SHAPES PARALLAX (Scroll driven) ───
+      // Parallax Shapes
       gsap.utils.toArray('.floating-shape').forEach(shape => {
         const speed = parseFloat(shape.getAttribute('data-speed')) || 0.2;
         gsap.to(shape, {
@@ -675,22 +886,8 @@
       setInterval(updateCountdown, 1000);
       updateCountdown();
 
-      // ─── 3. STATS CARD STAGGERED REVEAL (GSAP) ───
-      gsap.from('.stat-card', {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#stats-section',
-          start: 'top 85%'
-        }
-      });
-
-      // ─── 4. PINNED VISION TOUR ANIMATION (ScrollTrigger) ───
+      // ─── 3. PINNED VISION TOUR ANIMATION ───
       const tourCards = gsap.utils.toArray('.tour-card');
-      const visualPanel = document.getElementById('tour-visual-panel');
       const glow = document.getElementById('tour-bg-glow');
       const icon = document.getElementById('tour-icon');
       const title = document.getElementById('tour-visual-title');
@@ -707,30 +904,25 @@
       });
 
       function activateTourCard(card, index) {
-        // Toggle active styling
         tourCards.forEach(c => c.classList.remove('active-card'));
         card.classList.add('active-card');
 
-        // Extract metadata
         const color = card.getAttribute('data-color');
         const iconClass = card.getAttribute('data-icon');
         const visualTitleText = card.getAttribute('data-title');
         const visualDescText = card.getAttribute('data-desc');
 
-        // Premium GSAP animation of visual panel content (transform/opacity only)
         gsap.to('#tour-visual-content', {
           opacity: 0,
           scale: 0.9,
           y: -10,
           duration: 0.25,
           onComplete: () => {
-            // Apply updates
             glow.style.backgroundColor = color;
             icon.className = `fas ${iconClass} text-8xl text-navy mb-6`;
             title.textContent = visualTitleText;
             desc.textContent = visualDescText;
 
-            // Animate back in
             gsap.to('#tour-visual-content', {
               opacity: 1,
               scale: 1,
@@ -742,89 +934,137 @@
         });
       }
 
-      // ─── 5. PROGRAMS CARD STAGGERED REVEAL (GSAP) ───
-      gsap.from('.program-preview-card', {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#programs-preview',
-          start: 'top 80%'
+      // ─── 4. ESTIMATOR TRACK DATA ───
+      const TRACK_DATA = {
+        infant: {
+          badge: 'Infant Special Care (3-12 Months)',
+          badgeColor: 'text-pink bg-pink-light',
+          title: 'Infant Haven Nursery Track',
+          desc: 'Sterile crib bays, 1:2 nanny ratio, sensory stimulation exercises, and real-time mobile infant app logs.',
+          timing: '8:00 AM – 6:30 PM',
+          perks: 'Custom Infant Diets',
+          btnClass: 'track-btn active bg-gradient-to-r from-pink to-pink-hover text-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all shadow-glowPink'
+        },
+        toddler: {
+          badge: 'Toddler Playgroup (1-2.5 Years)',
+          badgeColor: 'text-navy bg-yellow-light',
+          title: 'Sensory Toddler Discovery Track',
+          desc: 'Language building circles, tactile sand & water play, gross motor climbing frames, and group storytimes.',
+          timing: '8:30 AM – 4:00 PM',
+          perks: 'Language Stimulation',
+          btnClass: 'track-btn active bg-gradient-to-r from-yellow to-yellow-hover text-navy py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all shadow-glowYellow'
+        },
+        junior: {
+          badge: 'Junior Montessori (2.5-4 Years)',
+          badgeColor: 'text-green-hover bg-green-light',
+          title: 'Foundation Montessori Track',
+          desc: 'Practical life exercises, early arithmetic beads, phonetic reading ladders, and social courtesy lessons.',
+          timing: '8:30 AM – 12:30 PM (or Full Care)',
+          perks: 'Practical Life Skills',
+          btnClass: 'track-btn active bg-gradient-to-r from-green to-green-hover text-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all shadow-glowGreen'
+        },
+        senior: {
+          badge: 'Senior Montessori (4-6 Years)',
+          badgeColor: 'text-white bg-blue-500',
+          title: 'Senior Prep Montessori Track',
+          desc: 'Advanced sentence building, addition/subtraction boards, botanical science modules, and primary school readiness.',
+          timing: '8:30 AM – 1:30 PM',
+          perks: 'Primary School Prep',
+          btnClass: 'track-btn active bg-gradient-to-r from-blue-500 to-navy text-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all shadow-glowBlue'
         }
+      };
+
+      const estBtns = document.querySelectorAll('.track-btn');
+      const estBadge = document.getElementById('est-badge');
+      const estTitle = document.getElementById('est-title');
+      const estDesc = document.getElementById('est-desc');
+      const estPills = document.getElementById('est-pills');
+
+      estBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const trackKey = btn.getAttribute('data-track');
+          const data = TRACK_DATA[trackKey];
+
+          estBtns.forEach(b => {
+            b.className = 'track-btn bg-white/80 text-navy hover:bg-white py-3 px-4 rounded-2xl font-title font-bold text-sm transition-all border border-navy/10';
+          });
+          btn.className = data.btnClass;
+
+          if (data) {
+            estBadge.className = `text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider ${data.badgeColor}`;
+            estBadge.textContent = data.badge;
+            estTitle.textContent = data.title;
+            estDesc.textContent = data.desc;
+            estPills.innerHTML = `
+              <span><i class="fas fa-clock text-pink mr-1.5"></i> ${data.timing}</span>
+              <span><i class="fas fa-star text-yellow-hover mr-1.5"></i> ${data.perks}</span>
+            `;
+          }
+        });
       });
 
-      // ─── 6. CAMPUS SAFETY SPOTLIGHT REVEAL (GSAP) ───
-      gsap.from('#safety-spotlight-text', {
-        opacity: 0,
-        x: -40,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#safety-spotlight-text',
-          start: 'top 85%'
-        }
+      // ─── 5. FAQ ACCORDION TOGGLE ───
+      const faqToggles = document.querySelectorAll('.faq-toggle');
+      faqToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+          const content = toggle.nextElementSibling;
+          const chevron = toggle.querySelector('.fa-chevron-down');
+          const isOpen = !content.classList.contains('hidden');
+
+          document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+          document.querySelectorAll('.faq-toggle .fa-chevron-down').forEach(ch => ch.style.transform = 'rotate(0deg)');
+
+          if (!isOpen) {
+            content.classList.remove('hidden');
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+          }
+        });
       });
 
-      gsap.from('#safety-spotlight-box', {
-        opacity: 0,
-        x: 40,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#safety-spotlight-box',
-          start: 'top 85%'
-        }
-      });
-
-      // ─── 7. WAITLIST SUBMISSION LOGIC (OWASP A01 & A03 Secured) ───
+      // ─── 6. WAITLIST FORM VALIDATION & API SUBMISSION ───
       const schemas = {
         name: /^[a-zA-Z\s]{2,100}$/,
         phone: /^(?:\+92|92|0)?3\d{9}$|^\+?[0-9\s\-()]{7,20}$/,
         email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
       };
 
-      // Toast notification helper
       function showNotification(message, type = 'success') {
         const wrapper = document.getElementById('toast-wrapper');
-        wrapper.innerHTML = ''; // Clear previous
+        wrapper.innerHTML = '';
 
         const toast = document.createElement('div');
         toast.className = 'coming-soon-toast';
         
         const iconEl = document.createElement('i');
         iconEl.className = type === 'success' 
-          ? 'fas fa-check-circle text-green text-lg' 
-          : 'fas fa-exclamation-circle text-pink text-lg';
+          ? 'fas fa-check-circle text-green text-xl' 
+          : 'fas fa-exclamation-circle text-pink text-xl';
 
         const textEl = document.createElement('span');
-        textEl.className = 'text-navy font-semibold text-sm';
-        textEl.textContent = message; // Safe textContent to block XSS
+        textEl.className = 'text-navy font-bold text-sm';
+        textEl.textContent = message;
 
         toast.appendChild(iconEl);
         toast.appendChild(textEl);
         wrapper.appendChild(toast);
 
-        // Auto-dismiss
         setTimeout(() => {
           toast.style.animation = 'slideUp 0.4s ease reverse forwards';
           setTimeout(() => toast.remove(), 400);
         }, 5000);
       }
 
-      // Live validation function
       function validateInput(input, errorSpan, regex) {
         const value = input.value.trim();
         const isValid = regex.test(value);
         if (isValid) {
           input.classList.remove('border-pink', 'ring-pink');
           input.classList.add('border-green', 'ring-green');
-          errorSpan.classList.add('hidden');
+          if (errorSpan) errorSpan.classList.add('hidden');
         } else {
           input.classList.remove('border-green', 'ring-green');
           input.classList.add('border-pink', 'ring-pink');
-          errorSpan.classList.remove('hidden');
+          if (errorSpan) errorSpan.classList.remove('hidden');
         }
         return isValid;
       }
@@ -833,7 +1073,6 @@
         const form = document.getElementById(formId);
         if (!form) return;
 
-        // Setup live listeners
         form.querySelector(`[name="name"]`).addEventListener('input', (e) => {
           validateInput(e.target, document.getElementById(fields.nameError), schemas.name);
         });
@@ -856,22 +1095,21 @@
           const isPhoneValid = validateInput(phoneInput, document.getElementById(fields.phoneError), schemas.phone);
 
           if (!isNameValid || !isEmailValid || !isPhoneValid) {
-            showNotification('Please correct form validation errors before submitting.', 'error');
+            showNotification('Please correct validation errors before submitting.', 'error');
             return;
           }
 
-          // Disable button
           const btn = form.querySelector('button[type="submit"]');
-          const origText = btn.textContent;
+          const origText = btn.innerHTML;
           btn.disabled = true;
-          btn.textContent = 'Registering...';
+          btn.innerHTML = 'Registering... <i class="fas fa-spinner fa-spin text-xs"></i>';
 
           try {
             const response = await fetch('/api/waitlist', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest' // OWASP A01 CSRF Guard validation
+                'X-Requested-With': 'XMLHttpRequest'
               },
               body: JSON.stringify({
                 name: nameInput.value.trim(),
@@ -884,23 +1122,21 @@
             if (response.ok && data.success) {
               showNotification(data.message, 'success');
               form.reset();
-              // Clear input validation classes
               [nameInput, emailInput, phoneInput].forEach(inp => {
                 inp.classList.remove('border-green', 'ring-green', 'border-pink', 'ring-pink');
               });
             } else {
-              showNotification(data.message || 'An error occurred. Please try again.', 'error');
+              showNotification(data.message || 'Registration failed. Please try again.', 'error');
             }
           } catch (err) {
-            showNotification('Could not connect to waitlist. Please check network.', 'error');
+            showNotification('Could not connect to server. Check network.', 'error');
           } finally {
             btn.disabled = false;
-            btn.textContent = origText;
+            btn.innerHTML = origText;
           }
         });
       }
 
-      // Configure the two waitlist forms
       setupWaitlistForm('hero-waitlist-form', {
         nameError: 'parent-name-error',
         emailError: 'parent-email-error',
@@ -911,6 +1147,22 @@
         nameError: 'footer-parent-name-error',
         emailError: 'footer-parent-email-error',
         phoneError: 'footer-parent-phone-error'
+      });
+
+    });
+
+    // ── Centered scroll for Apply Now / Select This Track ──────────────────
+    document.querySelectorAll('[data-scroll-center]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var targetId = this.getAttribute('data-scroll-center');
+        var target = document.getElementById(targetId);
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Give the form a brief highlight so the user notices it
+        target.style.transition = 'box-shadow 0.4s ease';
+        target.style.boxShadow = '0 0 0 3px rgba(233,30,99,0.45)';
+        setTimeout(function() { target.style.boxShadow = ''; }, 1400);
       });
     });
   </script>

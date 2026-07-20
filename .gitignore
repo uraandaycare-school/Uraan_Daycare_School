@@ -4,3 +4,9 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .DS_Store
+
+# Port-3000 main portal files — not part of Vercel coming-soon deployment
+views/index.ejs
+views/partials/
+public/js/main.js
+test_endpoints.js
