@@ -1,19 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "cleanUrls": true,
   "routes": [
+    {
+      "src": "/api/waitlist",
+      "dest": "/api/waitlist.js"
+    },
     {
       "src": "/(css|js|assets)/(.*)",
       "dest": "/public/$1/$2"
     },
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/public/index.html"
     }
   ]
 }
