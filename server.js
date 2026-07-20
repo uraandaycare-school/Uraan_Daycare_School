@@ -1,0 +1,468 @@
+/**
+ * URAAN-WEB-2026: Uraan Daycare & School — Secure Web Server
+ * Location: Karachi, Pakistan
+ *
+ * OWASP Controls Implemented:
+ *   A01 – CSRF: X-Requested-With header enforced on all POST endpoints
+ *   A03 – XSS: CSP nonce per-request; unsafe-inline removed; input sanitization
+ *   A04 – Insecure Design: PII redacted in all log output
+ *   A05 – Misconfiguration: frameAncestors, Permissions-Policy, Referrer-Policy
+ *   A06 – Vulnerable Deps: express-rate-limit, helmet, SRI on CDN assets (in EJS)
+ *   A09 – Logging: Structured, redacted logging — no raw PII ever written to stdout
+ */
+
+'use strict';
+
+const express  = require('express');
+const path     = require('path');
+const helmet   = require('helmet');
+const rateLimit = require('express-rate-limit');
+const crypto   = require('crypto');
+
+const app  = express();
+const PORT = process.env.PORT || 3000;
+
+// ─── Cloudflare Turnstile Keys ────────────────────────────────────────────────
+// Replace with real production keys via environment variables before deploying.
+const TURNSTILE_SITE_KEY   = process.env.TURNSTILE_SITE_KEY   || '1x00000000000000000000AA';
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '1x00000000000000000000000000000000';
+
+// ─── View Engine (EJS) ───────────────────────────────────────────────────────
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 0. CSP NONCE MIDDLEWARE
+//    Must run BEFORE Helmet so res.locals.nonce is available inside CSP directives.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 1. SECURITY HEADERS (Helmet)
+//    CSP nonce-based scriptSrc replaces 'unsafe-inline'.
+//    frameAncestors: 'none' prevents clickjacking (OWASP A05).
+//    Referrer-Policy set via Helmet option.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+
+        scriptSrc: [
+          "'self'",
+          // Per-request cryptographic nonce — unique every page load
+          (req, res) => `'nonce-${res.locals.nonce}'`,
+          // Cloudflare Turnstile injects sub-scripts from its own domain
+          'https://challenges.cloudflare.com',
+        ],
+
+        styleSrc: [
+          "'self'",
+          // Google Fonts CSS (served as external stylesheet, not inline)
+          'https://fonts.googleapis.com',
+          // Font Awesome CSS (loaded via <link> with SRI)
+          'https://cdnjs.cloudflare.com',
+          // NOTE: 'unsafe-inline' intentionally OMITTED — all inline style=""
+          // attributes have been moved to CSS classes (OWASP A03 hardening).
+        ],
+
+        fontSrc: [
+          "'self'",
+          'https://fonts.gstatic.com',       // Google Fonts binary files
+          'https://cdnjs.cloudflare.com',    // Font Awesome webfont files
+        ],
+
+        frameSrc: [
+          "'self'",
+          'https://challenges.cloudflare.com', // Turnstile challenge iframe
+          'https://www.google.com',             // Google Maps embed
+          'https://maps.googleapis.com',        // Maps API
+        ],
+
+        connectSrc: [
+          "'self'",
+          'https://challenges.cloudflare.com',
+        ],
+
+        imgSrc: [
+          "'self'",
+          'data:',
+          'https://*',
+        ],
+
+        objectSrc:      ["'none'"],
+        baseUri:        ["'self'"],
+        formAction:     ["'self'"],
+        // Clickjacking prevention (OWASP A05)
+        frameAncestors: ["'none'"],
+
+        // Enable HTTPS upgrade only in production
+        ...(process.env.NODE_ENV === 'production'
+          ? { upgradeInsecureRequests: [] }
+          : {}),
+      },
+    },
+
+    // Referrer-Policy (OWASP A05 — information leakage)
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+
+    // Disable COEP to avoid breaking Google Maps / Turnstile cross-origin loads
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 2. PERMISSIONS-POLICY
+//    Disable browser features the school site has no need for (OWASP A05).
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use((req, res, next) => {
+  res.setHeader(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=()'
+  );
+  next();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 3. BODY PARSERS + DOS MITIGATION
+//    Strict payload limit prevents buffer-overflow / resource exhaustion attacks.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use(express.json({ limit: '15kb' }));
+app.use(express.urlencoded({ extended: true, limit: '15kb' }));
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 4. RATE LIMITING
+//    5 form submissions per IP per 15-minute window.
+// ═══════════════════════════════════════════════════════════════════════════════
+const formSubmitLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many submissions from this IP. Please try again in 15 minutes.',
+  },
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 5. STATIC FILES
+//    Serves /css, /js, /assets — index.html is now rendered by EJS, not static.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 6. SECURITY HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * PII Redactor — OWASP A09
+ * Never log raw names, phone numbers, or email addresses.
+ * redact('Ali Ahmed') → 'Al***'
+ * redact('admissions@uraan.edu.pk') → 'ad***'
+ */
+function redact(str) {
+  if (!str || typeof str !== 'string' || str.length === 0) return '[empty]';
+  return str.slice(0, 2) + '***';
+}
+
+/**
+ * Input Sanitizer — OWASP A03 (XSS / Injection)
+ * Strips HTML tags and escapes characters abused in SQLi or HTML attributes.
+ */
+function sanitizeInput(input) {
+  if (typeof input !== 'string') return '';
+  return input
+    .replace(/<[^>]*>/g, '')             // Strip all HTML tags
+    .replace(/[;'"\\]/g, (ch) => {       // Escape injection-prone chars
+      switch (ch) {
+        case ';':  return ' ';
+        case "'":  return '&#x27;';
+        case '"':  return '&quot;';
+        case '\\': return '&#x5C;';
+        default:   return ch;
+      }
+    })
+    .trim();
+}
+
+/**
+ * Field Validators — strict regex + semantic rules
+ */
+const VALIDATORS = {
+  name:    (v) => /^[a-zA-Z\s]{2,100}$/.test(v),
+  phone:   (v) => /^(?:\+92|92|0)?3\d{9}$|^\+?[0-9\s\-()]{7,20}$/.test(v),
+  email:   (v) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v),
+  dob:     (v) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return false;
+    const age = (Date.now() - d.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+    return age >= 1 && age <= 15;
+  },
+  program: (v) => ['montessori', 'daycare', 'afterschool'].includes(v),
+  shift:   (v) => ['morning', 'afternoon', 'full-day'].includes(v),
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 7. CSRF GUARD — OWASP A01
+//    Verifies custom header that cross-origin (CSRF) requests cannot set.
+//    All API POSTs must include: X-Requested-With: XMLHttpRequest
+// ═══════════════════════════════════════════════════════════════════════════════
+function requireXHR(req, res, next) {
+  if (req.headers['x-requested-with'] !== 'XMLHttpRequest') {
+    return res.status(403).json({
+      success: false,
+      message: 'Forbidden: Invalid request origin. CSRF protection active.',
+    });
+  }
+  next();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 8. CLOUDFLARE TURNSTILE CAPTCHA VERIFICATION
+// ═══════════════════════════════════════════════════════════════════════════════
+async function verifyTurnstileToken(token, ipAddress) {
+  if (!token) return false;
+
+  // Skip network call in local test mode (sandbox token)
+  if (process.env.NODE_ENV === 'test' && token === '1x00000000000000000000AA') {
+    return true;
+  }
+
+  try {
+    const body = new URLSearchParams();
+    body.append('secret',   TURNSTILE_SECRET_KEY);
+    body.append('response', token);
+    body.append('remoteip', ipAddress);
+
+    const outcome = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+
+    const json = await outcome.json();
+    return json.success === true;
+  } catch (err) {
+    console.error('[Turnstile] Verification network error:', err.message);
+    return false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 9. API: ADMISSIONS — POST /api/admissions
+// ═══════════════════════════════════════════════════════════════════════════════
+app.post('/api/admissions', requireXHR, formSubmitLimiter, async (req, res) => {
+  const {
+    childName, childDob, program,
+    parentName, parentPhone, parentEmail,
+    emergencyContact, shift, employer,
+    captchaToken,
+  } = req.body;
+
+  // Captcha first — reject bots before any processing
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  if (!isHuman) {
+    return res.status(400).json({
+      success: false,
+      message: 'Security verification failed. Please complete the captcha challenge.',
+    });
+  }
+
+  // Sanitize
+  const sChildName       = sanitizeInput(childName);
+  const sChildDob        = sanitizeInput(childDob);
+  const sProgram         = sanitizeInput(program);
+  const sParentName      = sanitizeInput(parentName);
+  const sParentPhone     = sanitizeInput(parentPhone);
+  const sParentEmail     = sanitizeInput(parentEmail);
+  const sEmergencyContact = sanitizeInput(emergencyContact);
+  const sShift           = sanitizeInput(shift);
+  const sEmployer        = sanitizeInput(employer);  // Optional field
+
+  // Validate
+  if (!VALIDATORS.name(sChildName))
+    return res.status(400).json({ success: false, message: 'Invalid child name. Only letters allowed.' });
+  if (!VALIDATORS.dob(sChildDob))
+    return res.status(400).json({ success: false, message: 'Invalid date of birth. Child must be between 1–15 years.' });
+  if (!VALIDATORS.program(sProgram))
+    return res.status(400).json({ success: false, message: 'Invalid program selection.' });
+  if (!VALIDATORS.name(sParentName))
+    return res.status(400).json({ success: false, message: 'Invalid parent name. Only letters allowed.' });
+  if (!VALIDATORS.phone(sParentPhone))
+    return res.status(400).json({ success: false, message: 'Invalid phone format (e.g. 03XXXXXXXXX).' });
+  if (!VALIDATORS.email(sParentEmail))
+    return res.status(400).json({ success: false, message: 'Invalid email address.' });
+  if (!VALIDATORS.phone(sEmergencyContact))
+    return res.status(400).json({ success: false, message: 'Invalid emergency contact number.' });
+  if (!VALIDATORS.shift(sShift))
+    return res.status(400).json({ success: false, message: 'Invalid shift selection.' });
+
+  // ── OWASP A09: PII-REDACTED STRUCTURED LOG ──
+  console.log(
+    `[ADMISSIONS] Child: ${redact(sChildName)} | Parent: ${redact(sParentName)}` +
+    ` | Phone: ${redact(sParentPhone)} | Program: ${sProgram} | Shift: ${sShift}`
+  );
+
+  return res.status(200).json({
+    success: true,
+    message:
+      'Congratulations! Your application has been securely submitted. ' +
+      'Our Registrar will contact you shortly to confirm your campus visit.',
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 10. API: CONTACT — POST /api/contact
+// ═══════════════════════════════════════════════════════════════════════════════
+app.post('/api/contact', requireXHR, formSubmitLimiter, async (req, res) => {
+  const { name, email, phone, message, captchaToken } = req.body;
+
+  const isHuman = await verifyTurnstileToken(captchaToken, req.ip);
+  if (!isHuman) {
+    return res.status(400).json({
+      success: false,
+      message: 'Security verification failed. Please complete the captcha challenge.',
+    });
+  }
+
+  const sName    = sanitizeInput(name);
+  const sEmail   = sanitizeInput(email);
+  const sPhone   = sanitizeInput(phone);
+  const sMessage = sanitizeInput(message);
+
+  if (!VALIDATORS.name(sName))
+    return res.status(400).json({ success: false, message: 'Invalid name. Only letters allowed.' });
+  if (!VALIDATORS.email(sEmail))
+    return res.status(400).json({ success: false, message: 'Invalid email address.' });
+  if (!VALIDATORS.phone(sPhone))
+    return res.status(400).json({ success: false, message: 'Invalid phone number.' });
+  if (!sMessage || sMessage.length < 5)
+    return res.status(400).json({ success: false, message: 'Message too short (minimum 5 characters).' });
+
+  // ── OWASP A09: PII-REDACTED STRUCTURED LOG ──
+  console.log(
+    `[CONTACT] From: ${redact(sName)} | Email: ${redact(sEmail)} | Phone: ${redact(sPhone)}`
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: 'Your message was sent successfully. We will reply within 24 hours.',
+  });
+});
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 11a. WAITLIST API — POST /api/waitlist
+//     Accepts pre-registration for the coming-soon landing page.
+//     OWASP A01: requireXHR (CSRF guard)
+//     OWASP A04: PII-redacted structured log
+//     OWASP A09: No raw PII written to stdout
+// ═══════════════════════════════════════════════════════════════════════════════
+app.post('/api/waitlist', requireXHR, formSubmitLimiter, (req, res) => {
+  const raw = req.body || {};
+  const sName  = sanitizeInput(String(raw.name  || ''));
+  const sEmail = sanitizeInput(String(raw.email || ''));
+  const sPhone = sanitizeInput(String(raw.phone || ''));
+
+  if (!VALIDATORS.name(sName))
+    return res.status(400).json({ success: false, message: 'Invalid name. Only letters allowed.' });
+  if (!VALIDATORS.email(sEmail))
+    return res.status(400).json({ success: false, message: 'Invalid email address.' });
+  if (!VALIDATORS.phone(sPhone))
+    return res.status(400).json({ success: false, message: 'Invalid phone number.' });
+
+  // OWASP A09: PII-REDACTED STRUCTURED LOG
+  console.log(
+    `[WAITLIST] Registered: ${redact(sName)} | Email: ${redact(sEmail)} | Phone: ${redact(sPhone)}`
+  );
+
+  return res.status(200).json({
+    success: true,
+    message: "You're on the list! We'll WhatsApp you the moment enrollment opens.",
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 11b. COMING SOON PAGE — GET /coming-soon
+//     Renders the pre-launch landing page (Tailwind CDN + GSAP).
+//     Custom CSP is required because:
+//       • Tailwind Play CDN (cdn.tailwindcss.com) injects a <style> tag at runtime
+//         which requires 'unsafe-inline' in styleSrc (unavoidable for Tailwind CDN)
+//       • GSAP is loaded from cdnjs.cloudflare.com (already trusted domain)
+//     All our own inline <script> blocks still use per-request nonces.
+//     This route overrides Helmet's global CSP header for this page only.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.get('/coming-soon', (req, res) => {
+  const nonce = res.locals.nonce;
+
+  // Override global CSP — scoped to this page only
+  res.setHeader('Content-Security-Policy', [
+    `default-src 'self'`,
+    // Tailwind CDN + GSAP cdnjs — our inline scripts are nonce-gated
+    `script-src 'self' 'nonce-${nonce}' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com`,
+    // Tailwind CDN injects a <style> tag without a nonce — unsafe-inline required
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com`,
+    `font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com`,
+    `img-src 'self' data: https://*`,
+    `connect-src 'self'`,
+    `frame-src 'none'`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `frame-ancestors 'none'`,
+  ].join('; '));
+
+  res.render('coming-soon', { nonce });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 11. CATCH-ALL: Render EJS page
+//    Passes nonce (already in res.locals) and siteKey to the EJS template.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.get('*', (req, res) => {
+  res.render('index', { siteKey: TURNSTILE_SITE_KEY });
+});
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 12. START SERVER
+// ═══════════════════════════════════════════════════════════════════════════════
+const os = require('os');
+
+function getLANAddress() {
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (
+        net.family === 'IPv4' &&
+        !net.internal &&
+        !net.address.startsWith('169.') &&
+        !name.toLowerCase().includes('vmware') &&
+        !name.toLowerCase().includes('virtualbox')
+      ) {
+        return net.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  const lanIP = getLANAddress();
+  console.log('=============================================================');
+  console.log('  URAAN DAYCARE & SCHOOL WEB PORTAL');
+  console.log('  Campus: Karachi, Pakistan | Status: OWASP Hardened');
+  console.log('-------------------------------------------------------------');
+  console.log(`  LOCAL   → http://localhost:${PORT}`);
+  console.log(`  NETWORK → http://${lanIP}:${PORT}`);
+  console.log('=============================================================');
+  console.log(`  Security: CSP nonce | CSRF guard | PII-redacted logs`);
+  console.log(`  Architecture: EJS modular partials | ${PORT}`);
+  console.log('=============================================================');
+});

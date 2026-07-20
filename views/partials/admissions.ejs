@@ -1,0 +1,284 @@
+<%#
+  Partial: admissions.ejs
+  Contains: Multi-step enrollment wizard form (3 steps) + Turnstile CAPTCHA
+  Variables used: siteKey (Cloudflare Turnstile site key from server)
+  Inline styles removed → CSS classes: .mb-20, .text-pink, .success-desc, .success-contact, .mt-24
+%>
+
+<!-- ADMISSIONS FORM SECTION -->
+<section id="admissions" class="section admissions-section">
+
+  <!-- Wave Divider — Top -->
+  <div class="wave-divider wave-top fill-bg-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill-opacity="1" d="M0,96L60,101.3C120,107,240,117,360,112C480,107,600,85,720,80C840,75,960,85,1080,96C1200,107,1320,117,1380,122.7L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+    </svg>
+  </div>
+
+  <div class="container admissions-container">
+
+    <!-- Section Header -->
+    <div class="section-header text-center animate-on-scroll">
+      <span class="badge badge-yellow">Apply Online</span>
+      <h2>Secure Enrollment <span>Portal</span></h2>
+      <p>Register your child with Uraan Daycare &amp; School. Complete the three-step application checklist below.</p>
+    </div>
+
+    <div class="form-wizard-card animate-on-scroll">
+
+      <!-- Step Progress Tracker -->
+      <div class="steps-progress" role="progressbar" aria-label="Enrollment wizard progress" aria-valuemin="1" aria-valuemax="3">
+        <div class="steps-progress-bar" id="wizard-progress-bar"></div>
+        <div class="step-node active" data-step="0" aria-label="Step 1: Child Information">1</div>
+        <div class="step-node"        data-step="1" aria-label="Step 2: Parent Contact">2</div>
+        <div class="step-node"        data-step="2" aria-label="Step 3: Shift and Verification">3</div>
+      </div>
+
+      <!-- Form -->
+      <div id="admissions-form-card">
+        <form id="admissions-wizard" novalidate autocomplete="off">
+
+          <!-- ── STEP 1: CHILD DETAILS ──────────────────────────────────── -->
+          <div class="form-step-panel active" id="step-1-panel" role="group" aria-labelledby="step1-heading">
+            <h3 class="mb-20" id="step1-heading">
+              <i class="fas fa-child text-pink"></i>
+              Step 1: Child's Information
+            </h3>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label class="form-label" for="childName">
+                  Child's Full Name <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="childName"
+                  name="childName"
+                  class="form-input"
+                  placeholder="e.g. Ali Ahmed"
+                  required
+                  maxlength="100"
+                  autocomplete="off"
+                >
+                <span class="form-error-msg" id="childName-error" role="alert">
+                  Please enter a valid alphabet name (minimum 2 characters).
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="childDob">
+                  Child's Date of Birth <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="childDob"
+                  name="childDob"
+                  class="form-input"
+                  required
+                >
+                <span class="form-error-msg" id="childDob-error" role="alert">
+                  Invalid date. Child must be between 1 and 15 years old.
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label" for="program">
+                  Choose Program <span aria-hidden="true">*</span>
+                </label>
+                <select id="program" name="program" class="form-select" required>
+                  <option value="" disabled selected>-- Select a developmental track --</option>
+                  <option value="montessori">Montessori Early Learning (Age 2 – 5)</option>
+                  <option value="daycare">Daycare Services (Infants / Toddlers)</option>
+                  <option value="afterschool">After-School Care (Up to age 10)</option>
+                </select>
+                <span class="form-error-msg" id="program-error" role="alert">
+                  Please select a program track.
+                </span>
+              </div>
+
+            </div>
+            <div class="form-actions">
+              <span></span>
+              <button type="button" class="btn btn-primary btn-next">
+                Next Step <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- ── STEP 2: PARENT DETAILS ─────────────────────────────────── -->
+          <div class="form-step-panel" id="step-2-panel" role="group" aria-labelledby="step2-heading">
+            <h3 class="mb-20" id="step2-heading">
+              <i class="fas fa-user-shield text-pink"></i>
+              Step 2: Parent/Guardian Contact
+            </h3>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label class="form-label" for="parentName">
+                  Parent/Guardian Name <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="parentName"
+                  name="parentName"
+                  class="form-input"
+                  placeholder="e.g. Kamran Ahmed"
+                  required
+                  maxlength="100"
+                  autocomplete="name"
+                >
+                <span class="form-error-msg" id="parentName-error" role="alert">
+                  Please enter a valid alphabet name.
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="parentPhone">
+                  Mobile Number (Karachi/Pak) <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="parentPhone"
+                  name="parentPhone"
+                  class="form-input"
+                  placeholder="e.g. 03001234567"
+                  required
+                  maxlength="20"
+                  autocomplete="tel"
+                >
+                <span class="form-error-msg" id="parentPhone-error" role="alert">
+                  Please enter a valid Pakistani phone format (e.g. 03XXXXXXXXX).
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="parentEmail">
+                  Parent Email Address <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="parentEmail"
+                  name="parentEmail"
+                  class="form-input"
+                  placeholder="e.g. parent@email.com"
+                  required
+                  maxlength="150"
+                  autocomplete="email"
+                >
+                <span class="form-error-msg" id="parentEmail-error" role="alert">
+                  Please enter a valid email address.
+                </span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="emergencyContact">
+                  Emergency Contact Number <span aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="emergencyContact"
+                  name="emergencyContact"
+                  class="form-input"
+                  placeholder="e.g. 03331234567"
+                  required
+                  maxlength="20"
+                  autocomplete="off"
+                >
+                <span class="form-error-msg" id="emergencyContact-error" role="alert">
+                  Emergency contact number is required.
+                </span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="form-label" for="employer">
+                  Corporate Employer / Organization
+                  <span class="form-label-optional">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="employer"
+                  name="employer"
+                  class="form-input"
+                  placeholder="e.g. HBL Karachi office"
+                  maxlength="150"
+                  autocomplete="organization"
+                >
+              </div>
+
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline btn-prev">
+                <i class="fas fa-arrow-left"></i> Previous
+              </button>
+              <button type="button" class="btn btn-primary btn-next">
+                Next Step <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- ── STEP 3: SHIFT + CAPTCHA ────────────────────────────────── -->
+          <div class="form-step-panel" id="step-3-panel" role="group" aria-labelledby="step3-heading">
+            <h3 class="mb-20" id="step3-heading">
+              <i class="fas fa-clock text-pink"></i>
+              Step 3: Shift Choice &amp; Security Verification
+            </h3>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label class="form-label" for="shift">
+                  Preferred Shift &amp; Timings <span aria-hidden="true">*</span>
+                </label>
+                <select id="shift" name="shift" class="form-select" required>
+                  <option value="" disabled selected>-- Select a timing slot --</option>
+                  <option value="morning">Morning Core Program (8:30 AM – 12:30 PM)</option>
+                  <option value="afternoon">Afternoon Care Program (1:00 PM – 5:30 PM)</option>
+                  <option value="full-day">Full Corporate Care (8:00 AM – 6:30 PM)</option>
+                </select>
+                <span class="form-error-msg" id="shift-error" role="alert">
+                  Please choose a timing shift.
+                </span>
+              </div>
+            </div>
+
+            <!-- Cloudflare Turnstile CAPTCHA — siteKey injected server-side -->
+            <div class="captcha-row">
+              <div
+                class="cf-turnstile"
+                data-sitekey="<%= siteKey %>"
+                data-theme="light"
+                aria-label="Security verification captcha"
+              ></div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline btn-prev">
+                <i class="fas fa-arrow-left"></i> Previous
+              </button>
+              <button type="submit" class="btn btn-primary" id="btn-submit-wizard">
+                Securely Submit Inquiry <i class="fas fa-lock"></i>
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Success Panel (shown after successful submission) -->
+      <div class="wizard-success-card hidden" id="admissions-success" aria-live="polite">
+        <div class="success-icon-wrap">
+          <i class="fas fa-check-double"></i>
+        </div>
+        <h2>Application Securely Submitted!</h2>
+        <p class="success-desc">
+          Thank you for enrolling in Uraan Daycare &amp; School. Your parent profile has been
+          securely registered on our campus server.
+        </p>
+        <p class="success-contact">
+          A Montessori Representative will contact you at your verified mobile number to
+          finalize fee receipts and schedule a physical campus visit.
+        </p>
+        <a href="#home" class="btn btn-secondary mt-24">Return to Homepage</a>
+      </div>
+
+    </div>
+  </div>
+</section>
