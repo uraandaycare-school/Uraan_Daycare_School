@@ -398,26 +398,20 @@ app.post('/api/waitlist', requireXHR, formSubmitLimiter, (req, res) => {
 //     All our own inline <script> blocks still use per-request nonces.
 //     This route overrides Helmet's global CSP header for this page only.
 // ═══════════════════════════════════════════════════════════════════════════════
-// 11. COMING SOON PAGE (PRE-LAUNCH MODE)
-//     Renders the pre-launch landing page (Tailwind CDN + GSAP).
-//     Custom CSP is required because:
-//       • Tailwind Play CDN (cdn.tailwindcss.com) injects a <style> tag at runtime
-//         which requires 'unsafe-inline' in styleSrc (unavoidable for Tailwind CDN)
-//       • GSAP is loaded from cdnjs.cloudflare.com (already trusted domain)
-//     All our own inline <script> blocks still use per-request nonces.
-// ═══════════════════════════════════════════════════════════════════════════════
-function renderComingSoon(req, res) {
+app.get('/coming-soon', (req, res) => {
   const nonce = res.locals.nonce;
 
-  // Override global CSP — scoped to coming soon page
+  // Override global CSP — scoped to this page only
   res.setHeader('Content-Security-Policy', [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://challenges.cloudflare.com`,
+    // Tailwind CDN + GSAP cdnjs — our inline scripts are nonce-gated
+    `script-src 'self' 'nonce-${nonce}' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com`,
+    // Tailwind CDN injects a <style> tag without a nonce — unsafe-inline required
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com`,
     `font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com`,
     `img-src 'self' data: https://*`,
-    `connect-src 'self' https://challenges.cloudflare.com`,
-    `frame-src 'none' https://challenges.cloudflare.com`,
+    `connect-src 'self'`,
+    `frame-src 'none'`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
@@ -425,23 +419,19 @@ function renderComingSoon(req, res) {
   ].join('; '));
 
   res.render('coming-soon', { nonce });
-}
+});
 
-// Serve Coming Soon variant on root route and /coming-soon
-app.get('/', renderComingSoon);
-app.get('/coming-soon', renderComingSoon);
-
-// Optional route to preview full site before official launch
-app.get('/full-site', (req, res) => {
+// ═══════════════════════════════════════════════════════════════════════════════
+// 11. CATCH-ALL: Render EJS page
+//    Passes nonce (already in res.locals) and siteKey to the EJS template.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.get('*', (req, res) => {
   res.render('index', { siteKey: TURNSTILE_SITE_KEY });
 });
 
-// Catch-all route -> Coming Soon page
-app.get('*', renderComingSoon);
-
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 12. START SERVER / VERCEL EXPORT
+// 12. START SERVER
 // ═══════════════════════════════════════════════════════════════════════════════
 const os = require('os');
 
@@ -463,21 +453,16 @@ function getLANAddress() {
   return 'localhost';
 }
 
-if (require.main === module) {
-  app.listen(PORT, '0.0.0.0', () => {
-    const lanIP = getLANAddress();
-    console.log('=============================================================');
-    console.log('  URAAN DAYCARE & SCHOOL WEB PORTAL (COMING SOON MODE)');
-    console.log('  Campus: Karachi, Pakistan | Status: OWASP Hardened');
-    console.log('-------------------------------------------------------------');
-    console.log(`  LOCAL   → http://localhost:${PORT}`);
-    console.log(`  NETWORK → http://${lanIP}:${PORT}`);
-    console.log('=============================================================');
-    console.log(`  Security: CSP nonce | CSRF guard | PII-redacted logs`);
-    console.log(`  Architecture: EJS modular partials | Port ${PORT}`);
-    console.log('=============================================================');
-  });
-}
-
-module.exports = app;
-
+app.listen(PORT, '0.0.0.0', () => {
+  const lanIP = getLANAddress();
+  console.log('=============================================================');
+  console.log('  URAAN DAYCARE & SCHOOL WEB PORTAL');
+  console.log('  Campus: Karachi, Pakistan | Status: OWASP Hardened');
+  console.log('-------------------------------------------------------------');
+  console.log(`  LOCAL   → http://localhost:${PORT}`);
+  console.log(`  NETWORK → http://${lanIP}:${PORT}`);
+  console.log('=============================================================');
+  console.log(`  Security: CSP nonce | CSRF guard | PII-redacted logs`);
+  console.log(`  Architecture: EJS modular partials | ${PORT}`);
+  console.log('=============================================================');
+});
