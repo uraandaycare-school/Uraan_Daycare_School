@@ -397,29 +397,18 @@ app.post('/api/waitlist', requireXHR, formSubmitLimiter, (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 11. ROUTE HANDLING
-//     Always serves the Coming Soon / Pre-Launch Waitlist page.
-//     Deployed on Vercel — port branching not applicable in serverless.
+// 11. ROUTE HANDLING — Full Uraan Daycare & School Portal
 // ═══════════════════════════════════════════════════════════════════════════════
-function setComingSoonCSP(req, res, next) {
-  res.setHeader('Content-Security-Policy', [
-    `default-src 'self'`,
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/`,
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://www.gstatic.com`,
-    `font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com`,
-    `img-src 'self' data: https://*`,
-    `connect-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/`,
-    `frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com`,
-    `object-src 'none'`,
-    `base-uri 'self'`,
-    `form-action 'self'`,
-    `frame-ancestors 'none'`,
-  ].join('; '));
-  next();
-}
+app.get('/', (req, res) => {
+  res.render('index', {
+    nonce:   res.locals.nonce,
+    siteKey: RECAPTCHA_SITE_KEY,
+  });
+});
 
-app.get('*', setComingSoonCSP, (req, res) => {
-  res.render('coming-soon', { nonce: res.locals.nonce });
+// Catch-all: redirect unknown paths back to home
+app.get('*', (req, res) => {
+  res.redirect('/');
 });
 
 

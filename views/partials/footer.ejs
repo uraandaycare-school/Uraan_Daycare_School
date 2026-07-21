@@ -1,0 +1,95 @@
+<%#
+  Partial: footer.ejs
+  Contains: Footer grid (brand, nav, hours), social links, legal bar
+  Variables used: none (static markup)
+  Security: All target="_blank" links have rel="noopener noreferrer"
+  Inline styles removed → CSS classes: .fc-blue, .fc-rose, .fc-gold, .fc-green, .footer-sub, .security-note
+%>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <h3 class="logo-text">
+          <span class="logo-u fc-blue">U</span><span class="logo-r fc-rose">r</span><span class="logo-a1 fc-gold">a</span><span class="logo-a2 fc-mblue">a</span><span class="logo-n fc-green">n</span>
+          <span class="footer-sub">Daycare</span>
+        </h3>
+        <p>
+          Nurturing Today, Inspiring Tomorrow. Supporting childhood development through
+          specialized Montessori materials and secure, certified daycare ecosystems.
+        </p>
+        <div class="footer-socials">
+          <a
+            href="https://facebook.com"
+            class="social-icon"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Uraan School Facebook Page"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="https://instagram.com"
+            class="social-icon"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Uraan School Instagram Profile"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="https://twitter.com"
+            class="social-icon"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Uraan School Twitter Account"
+          >
+            <i class="fab fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navigation Column -->
+      <div class="footer-nav">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#programs">Programs</a></li>
+          <li><a href="#admissions">Admissions Portal</a></li>
+          <li><a href="#contact">Contact &amp; Map</a></li>
+        </ul>
+      </div>
+
+      <!-- Hours Column -->
+      <div class="footer-hours">
+        <h4>School Hours</h4>
+        <p><strong>Montessori Core:</strong> 8:30 AM – 12:30 PM (Mon–Fri)</p>
+        <p><strong>Daycare Shifts:</strong> 8:00 AM – 6:30 PM (Mon–Sat)</p>
+        <p><strong>Administrative:</strong> 9:00 AM – 4:00 PM (Mon–Sat)</p>
+        <p class="security-note">
+          <i class="fas fa-shield-halved"></i>
+          Campus checked by 24/7 Security Guard.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Legal Bar -->
+    <div class="footer-bottom">
+      <p>&copy; 2026 Uraan Daycare &amp; School. All Rights Reserved. Sector 11-A, Gulshan-e-Usman, North Karachi, Pakistan.</p>
+      <p>
+        Secured via
+        <a
+          href="https://cloudflare.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Cloudflare Shield</a>
+        &amp; HSTS
+      </p>
+    </div>
+  </div>
+</footer>

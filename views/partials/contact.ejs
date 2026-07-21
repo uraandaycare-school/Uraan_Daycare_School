@@ -1,0 +1,187 @@
+<%#
+  Partial: contact.ejs
+  Contains: Contact info panel, Google Maps embed, and contact message form
+  Variables used: siteKey (Cloudflare Turnstile site key from server)
+  Inline styles removed → CSS classes: .mb-24, .icon-accent, .mb-16, .mb-20, .w-full
+  Security: target="_blank" links hardened with rel="noopener noreferrer"
+%>
+
+<!-- CONTACT & LOCATION SECTION -->
+<section id="contact" class="section contact-section">
+
+  <!-- Wave Divider — Top -->
+  <div class="wave-divider wave-top fill-white">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill-opacity="1" d="M0,224L60,197.3C120,171,240,117,360,117C480,117,600,171,720,197.3C840,224,960,224,1080,197.3C1200,171,1320,117,1380,90.7L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+    </svg>
+  </div>
+
+  <div class="container">
+
+    <!-- Section Header -->
+    <div class="section-header text-center animate-on-scroll">
+      <span class="badge badge-pink">Get In Touch</span>
+      <h2>Reach <span>Our Campus</span></h2>
+      <p>Have questions about fees or daycare schedules? Contact us directly or visit our Karachi campus.</p>
+    </div>
+
+    <div class="contact-grid">
+
+      <!-- ── CONTACT INFO PANEL ────────────────────────────────────────── -->
+      <div class="contact-info-panel animate-on-scroll">
+
+        <div class="contact-detail-item">
+          <div class="contact-icon-box" aria-hidden="true">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <div class="contact-detail-text">
+            <h4>Campus Location</h4>
+            <p>
+              Banglow No. A-250, Sector 11-A,<br>
+              Gulshan-e-Usman, Near Power House Roundabout,<br>
+              North Karachi, Pakistan
+            </p>
+          </div>
+        </div>
+
+        <div class="contact-detail-item">
+          <div class="contact-icon-box" aria-hidden="true">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div class="contact-detail-text">
+            <h4>Registrar Phone Line</h4>
+            <p>
+              <a href="tel:+923368334441" class="contact-phone-link">+92 336 8334441</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="contact-detail-item">
+          <div class="contact-icon-box" aria-hidden="true">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="contact-detail-text">
+            <h4>Email Inquiries</h4>
+            <p>
+              <a href="mailto:uraandaycare@gmail.com" class="contact-email-link">uraandaycare@gmail.com</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Google Maps Embed — Sector 11-A, Gulshan-e-Usman, North Karachi -->
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3617.2!2d67.05766!3d24.98199!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33e00000000%3A0x0!2sSector%2011-A%2C%20Gulshan-e-Usman%2C%20North%20Karachi%2C%20Pakistan!5e0!3m2!1sen!2spk!4v1721550000000!5m2!1sen!2spk"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Uraan Daycare & School — Sector 11-A, Gulshan-e-Usman, North Karachi"
+          ></iframe>
+        </div>
+
+      </div>
+
+      <!-- ── CONTACT MESSAGE FORM ───────────────────────────────────────── -->
+      <div class="contact-form-card animate-on-scroll delay-015">
+        <h3 class="mb-24">
+          <i class="fas fa-paper-plane icon-accent"></i>
+          Drop Us a Message
+        </h3>
+
+        <form id="contact-form" novalidate autocomplete="off">
+
+          <div class="form-group mb-16">
+            <label class="form-label" for="contact-name">
+              Full Name <span aria-hidden="true">*</span>
+            </label>
+            <input
+              type="text"
+              id="contact-name"
+              name="name"
+              class="form-input"
+              placeholder="e.g. Sarah Khan"
+              required
+              maxlength="100"
+              autocomplete="name"
+            >
+            <span class="form-error-msg" id="contact-name-error" role="alert">
+              Please enter a valid alphabet name.
+            </span>
+          </div>
+
+          <div class="form-group mb-16">
+            <label class="form-label" for="contact-email">
+              Email Address <span aria-hidden="true">*</span>
+            </label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              class="form-input"
+              placeholder="e.g. parent@domain.com"
+              required
+              maxlength="150"
+              autocomplete="email"
+            >
+            <span class="form-error-msg" id="contact-email-error" role="alert">
+              Please enter a valid email address.
+            </span>
+          </div>
+
+          <div class="form-group mb-16">
+            <label class="form-label" for="contact-phone">
+              Phone Number <span aria-hidden="true">*</span>
+            </label>
+            <input
+              type="tel"
+              id="contact-phone"
+              name="phone"
+              class="form-input"
+              placeholder="e.g. 03123456789"
+              required
+              maxlength="20"
+              autocomplete="tel"
+            >
+            <span class="form-error-msg" id="contact-phone-error" role="alert">
+              Please enter a valid phone number.
+            </span>
+          </div>
+
+          <div class="form-group mb-20">
+            <label class="form-label" for="contact-message">
+              Message <span aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="contact-message"
+              name="message"
+              rows="4"
+              class="form-textarea"
+              placeholder="How can we help you? Ask about fees, slots, or meal guidelines..."
+              required
+              maxlength="1000"
+            ></textarea>
+            <span class="form-error-msg" id="contact-message-error" role="alert">
+              Message must be at least 5 characters.
+            </span>
+          </div>
+
+          <!-- Google reCAPTCHA — siteKey injected server-side -->
+          <div class="captcha-row">
+            <div
+              class="g-recaptcha"
+              data-sitekey="<%= siteKey %>"
+              data-theme="light"
+              aria-label="Security verification captcha"
+            ></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full">
+            Send Message <i class="fas fa-lock"></i>
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
