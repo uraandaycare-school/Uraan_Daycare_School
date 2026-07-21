@@ -1441,7 +1441,7 @@ footer {
     right: 0;
   }
   
-  .nav-links a {
+  .nav-links a:not(.btn) {
     color: var(--color-white);
     font-size: 1.2rem;
   }
