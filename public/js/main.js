@@ -70,7 +70,7 @@ function initNavigation() {
   const header = document.querySelector('header');
   const burgerMenu = document.querySelector('.burger-menu');
   const navLinks = document.querySelector('.nav-links');
-  const navAnchors = document.querySelectorAll('.nav-links a:not(.btn)');
+  const navAnchors = document.querySelectorAll('.nav-links a');
 
   // Sticky Navbar on Scroll
   window.addEventListener('scroll', () => {
@@ -88,11 +88,33 @@ function initNavigation() {
     navLinks.classList.toggle('active');
   });
 
-  // Close Mobile Menu on Anchor Click
+  // Close Mobile Menu on Anchor Click (includes Apply Now button)
   navAnchors.forEach(anchor => {
     anchor.addEventListener('click', () => {
       burgerMenu.classList.remove('active');
       navLinks.classList.remove('active');
+    });
+  });
+
+  // Global "Apply Now" & Program link handler (pre-selects program & scrolls)
+  document.querySelectorAll('a[href="#admissions"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetProgram = link.getAttribute('data-program');
+      if (targetProgram) {
+        const programSelect = document.getElementById('program');
+        if (programSelect) {
+          programSelect.value = targetProgram;
+          validateField(programSelect);
+        }
+      }
+      const admissionsSection = document.getElementById('admissions');
+      if (admissionsSection) {
+        admissionsSection.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+          const childNameInput = document.getElementById('childName');
+          if (childNameInput) childNameInput.focus();
+        }, 400);
+      }
     });
   });
 
@@ -289,6 +311,17 @@ function initAdmissionsForm() {
 
     return isAllValid;
   }
+
+  // Step Progress Node Click Handler (direct step jump)
+  stepNodes.forEach((node, index) => {
+    node.style.cursor = 'pointer';
+    node.addEventListener('click', () => {
+      if (index < currentStepIndex || validateCurrentStep()) {
+        currentStepIndex = index;
+        updateStepUI();
+      }
+    });
+  });
 
   // Wizard Navigation Action Button Handlers
   nextBtns.forEach(btn => {
