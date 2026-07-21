@@ -300,7 +300,7 @@ header.scrolled {
   align-items: center;
 }
 
-.nav-links a {
+.nav-links a:not(.btn) {
   font-family: var(--font-title);
   font-weight: 500;
   font-size: 1.05rem;
@@ -309,7 +309,7 @@ header.scrolled {
   padding: 4px 0;
 }
 
-.nav-links a::after {
+.nav-links a:not(.btn)::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -321,14 +321,24 @@ header.scrolled {
   border-radius: var(--radius-round);
 }
 
-.nav-links a:hover::after,
-.nav-links a.active::after {
+.nav-links a:not(.btn):hover::after,
+.nav-links a:not(.btn).active::after {
   width: 100%;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-links a:not(.btn):hover,
+.nav-links a:not(.btn).active {
   color: var(--color-pink);
+}
+
+.nav-links a.btn {
+  color: var(--color-white) !important;
+  padding: 10px 24px;
+  font-size: 1rem;
+}
+
+.nav-links a.btn:hover {
+  color: var(--color-white) !important;
 }
 
 /* Burger Menu button */
