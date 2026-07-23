@@ -24,6 +24,10 @@ const crypto   = require('crypto');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust Vercel reverse proxy for rate limiting and IP detection
+app.set('trust proxy', 1);
+
+
 // ─── Google reCAPTCHA Keys ───────────────────────────────────────────────────
 // Replace with real production keys via environment variables before deploying.
 const RECAPTCHA_SITE_KEY   = process.env.RECAPTCHA_SITE_KEY   || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
