@@ -83,12 +83,12 @@
                 };
                 byProgram.forEach(p => {
                   const pct = total > 0 ? Math.round((p.count / total) * 100) : 0;
+                  const pillStyle = `width: ${pct}%; background: ${programColors[p.program] || 'var(--pink)'};`;
               %>
               <div class="program-pill">
                 <span class="pill-label"><%= p.program %></span>
                 <div class="pill-bar-wrap">
-                  <div class="pill-bar"
-                    style="width:<%= pct %>%; background:<%= programColors[p.program] || 'var(--pink)' %>">
+                  <div class="pill-bar" style="<%= pillStyle %>">
                   </div>
                 </div>
                 <span class="pill-count"><%= p.count %></span>
