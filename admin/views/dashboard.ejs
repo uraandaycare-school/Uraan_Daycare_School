@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/admin-head', { title: 'Dashboard', nonce }) %>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('./partials/admin-sidebar', { currentPage: 'dashboard', admin }) %>
+
+    <main class="admin-main">
+
+      <!-- Topbar -->
+      <div class="admin-topbar">
+        <div>
+          <div class="topbar-title">📊 Dashboard</div>
+          <div class="topbar-breadcrumb">Overview of all student records</div>
+        </div>
+        <a href="/admin/students/new" class="btn btn-primary btn-sm" id="topbar-add-btn">
+          <i class="fas fa-plus"></i> Add Student
+        </a>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- ── Stat Cards ── -->
+        <div class="stats-grid">
+
+          <div class="stat-card pink-top">
+            <div class="stat-icon pink">👩‍🎓</div>
+            <div>
+              <div class="stat-num pink"><%= total %></div>
+              <div class="stat-label">Total Students</div>
+            </div>
+          </div>
+
+          <%
+            const active    = byStatus.find(s => s.status === 'active')    || { count: 0 };
+            const inactive  = byStatus.find(s => s.status === 'inactive')  || { count: 0 };
+            const graduated = byStatus.find(s => s.status === 'graduated') || { count: 0 };
+          %>
+
+          <div class="stat-card green-top">
+            <div class="stat-icon green">✅</div>
+            <div>
+              <div class="stat-num green"><%= active.count %></div>
+              <div class="stat-label">Active Enrollments</div>
+            </div>
+          </div>
+
+          <div class="stat-card blue-top">
+            <div class="stat-icon blue">🎓</div>
+            <div>
+              <div class="stat-num blue"><%= graduated.count %></div>
+              <div class="stat-label">Graduated</div>
+            </div>
+          </div>
+
+          <div class="stat-card yellow-top">
+            <div class="stat-icon yellow">⏸️</div>
+            <div>
+              <div class="stat-num yellow"><%= inactive.count %></div>
+              <div class="stat-label">Inactive</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Two-column grid ── -->
+        <div class="dash-grid">
+
+          <!-- Program Breakdown Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📚 Enrollment by Program</span>
+            </div>
+
+            <div class="program-pills">
+              <%
+                const programColors = {
+                  montessori:  'var(--pink)',
+                  daycare:     'var(--green)',
+                  afterschool: 'var(--yellow-hover)'
+                };
+                byProgram.forEach(p => {
+                  const pct = total > 0 ? Math.round((p.count / total) * 100) : 0;
+              %>
+              <div class="program-pill">
+                <span class="pill-label"><%= p.program %></span>
+                <div class="pill-bar-wrap">
+                  <div class="pill-bar"
+                    style="width:<%= pct %>%; background:<%= programColors[p.program] || 'var(--pink)' %>">
+                  </div>
+                </div>
+                <span class="pill-count"><%= p.count %></span>
+              </div>
+              <% }); %>
+              <% if (byProgram.length === 0) { %>
+                <p class="text-muted text-sm" style="padding:8px 0;">
+                  No data yet. <a href="/admin/students/new" style="color:var(--pink);font-weight:700;">Add students →</a>
+                </p>
+              <% } %>
+            </div>
+
+            <!-- Status Chips -->
+            <div class="status-wrap">
+              <div class="status-chip active">
+                <div class="num"><%= active.count %></div>
+                <div class="label">Active</div>
+              </div>
+              <div class="status-chip inactive">
+                <div class="num"><%= inactive.count %></div>
+                <div class="label">Inactive</div>
+              </div>
+              <div class="status-chip graduated">
+                <div class="num"><%= graduated.count %></div>
+                <div class="label">Graduated</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Students Card -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">🕒 Recently Enrolled</span>
+              <a href="/admin/students" class="btn btn-ghost btn-sm" id="view-all-btn">View All →</a>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Child Name</th>
+                    <th>Program</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (recent.length === 0) { %>
+                  <tr>
+                    <td colspan="4" class="text-muted text-sm" style="text-align:center;padding:32px;">
+                      No students yet.<br>
+                      <a href="/admin/students/new" style="color:var(--pink);font-weight:700;">Add the first student →</a>
+                    </td>
+                  </tr>
+                  <% } %>
+                  <% recent.forEach(s => { %>
+                  <tr>
+                    <td style="font-weight:700;font-family:var(--font-title)"><%= s.child_name %></td>
+                    <td><span class="badge badge-<%= s.program %>"><%= s.program %></span></td>
+                    <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                    <td>
+                      <a href="/admin/students/<%= s.id %>/edit"
+                         class="btn btn-ghost btn-sm"
+                         style="border-radius:var(--radius-full);">
+                        <i class="fas fa-pen"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quick Action Banner -->
+        <div style="margin-top:24px;background:linear-gradient(135deg,var(--pink-light),var(--yellow-light));border-radius:var(--radius-md);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(233,30,99,0.15);box-shadow:var(--shadow-sm);">
+          <div>
+            <div style="font-family:var(--font-title);font-size:1rem;font-weight:600;color:var(--navy);">Ready to enroll a new student?</div>
+            <div class="text-sm text-muted" style="margin-top:2px;">Add complete child and parent information in one form.</div>
+          </div>
+          <a href="/admin/students/new" class="btn btn-primary" id="banner-add-btn">
+            <i class="fas fa-user-plus"></i> Add Student
+          </a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</body>
+</html>

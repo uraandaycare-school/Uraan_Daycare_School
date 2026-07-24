@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/admin-head', { title: formTitle, nonce }) %>
+  <style nonce="<%= nonce %>">
+    .form-section {
+      margin-bottom: 24px;
+      border-top: 4px solid var(--pink);
+    }
+    .form-section.parent1-sec { border-top-color: var(--yellow); }
+    .form-section.parent2-sec { border-top-color: var(--blue); }
+    .form-section.pickup-sec { border-top-color: var(--green); }
+    .form-section.medical-sec { border-top-color: var(--pink); }
+    .form-section.health-sec { border-top-color: var(--yellow); }
+    .form-section.consent-sec { border-top-color: var(--blue); }
+    .form-section.checklist-sec { border-top-color: var(--green); }
+    .form-section.system-sec { border-top-color: var(--pink); }
+
+    .form-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--navy);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--sky-dark);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 2px solid var(--sky-dark);
+      margin-top: 20px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+    }
+    .checkbox-group input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      text-transform: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .pickup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      padding: 12px;
+      background: var(--sky-light);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--sky-dark);
+      margin-bottom: 12px;
+    }
+    .pickup-title {
+      grid-column: 1 / -1;
+      font-family: var(--font-title);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--navy-light);
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('./partials/admin-sidebar', {
+      currentPage: student ? 'students' : 'add-student',
+      admin
+    }) %>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <div class="topbar-title"><%= formTitle %></div>
+          <div class="topbar-breadcrumb">
+            <a href="/admin/students" style="color:var(--pink);text-decoration:none;font-weight:600;">Students</a>
+            <span style="margin: 0 4px; color: var(--muted);">/</span>
+            <%= student ? student.child_name || 'Edit' : 'New Student' %>
+          </div>
+        </div>
+        <a href="/admin/students" class="btn btn-ghost btn-sm">
+          <i class="fas fa-arrow-left"></i> Back to Students
+        </a>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- Validation Errors -->
+        <% if (errors && errors.length) { %>
+          <div class="alert alert-danger" id="form-errors">
+            <div>
+              <strong>⚠️ Please fix the following errors:</strong>
+              <ul style="margin-top:6px;padding-left:18px;font-size:0.85rem;">
+                <% errors.forEach(e => { %><li><%= e %></li><% }); %>
+              </ul>
+            </div>
+          </div>
+        <% } %>
+
+        <form action="<%= formAction %>" method="POST" id="student-form" autocomplete="off">
+
+          <!-- 1. CHILD INFORMATION -->
+          <div class="card form-section">
+            <div class="form-section-title">
+              <span style="color: var(--pink)">👶</span> 1. Child's Personal Information
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="child_name">Full Name *</label>
+                <input type="text" id="child_name" name="child_name"
+                       placeholder="e.g. Ali Ahmed"
+                       value="<%= student ? student.child_name || '' : '' %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="child_dob">Date of Birth *</label>
+                <input type="date" id="child_dob" name="child_dob"
+                       value="<%= student ? student.child_dob || '' : '' %>"
+                       max="<%= new Date().toISOString().split('T')[0] %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="preferred_name">Preferred Name</label>
+                <input type="text" id="preferred_name" name="preferred_name"
+                       placeholder="e.g. Ali"
+                       value="<%= student ? student.preferred_name || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <input type="text" id="gender" name="gender"
+                       placeholder="e.g. Male / Female"
+                       value="<%= student ? student.gender || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="languages_spoken">Languages Spoken</label>
+                <input type="text" id="languages_spoken" name="languages_spoken"
+                       placeholder="e.g. English, Urdu"
+                       value="<%= student ? student.languages_spoken || '' : '' %>" />
+              </div>
+
+              <div class="form-group full">
+                <label for="home_address">Home Address</label>
+                <textarea id="home_address" name="home_address"
+                          placeholder="Full home residential address…"><%= student ? student.home_address || '' : '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. PARENT / GUARDIAN 1 (PRIMARY) -->
+          <div class="card form-section parent1-sec">
+            <div class="form-section-title">
+              <span style="color: var(--yellow-hover)">👤</span> 2. Parent / Guardian 1 Information (Primary)
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="parent_name">Full Name *</label>
+                <input type="text" id="parent_name" name="parent_name"
+                       placeholder="e.g. Kamran Ahmed"
+                       value="<%= student ? student.parent_name || '' : '' %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="parent_relationship">Relationship (e.g. Father, Mother)</label>
+                <input type="text" id="parent_relationship" name="parent_relationship"
+                       placeholder="e.g. Father"
+                       value="<%= student ? student.parent_relationship || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="parent_phone">Cell Phone *</label>
+                <input type="tel" id="parent_phone" name="parent_phone"
+                       placeholder="e.g. 03001234567"
+                       value="<%= student ? student.parent_phone || '' : '' %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="parent_email">Email Address *</label>
+                <input type="email" id="parent_email" name="parent_email"
+                       placeholder="e.g. parent@email.com"
+                       value="<%= student ? student.parent_email || '' : '' %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="employer">Employer / Work Organization</label>
+                <input type="text" id="employer" name="employer"
+                       placeholder="e.g. HBL Karachi Office"
+                       value="<%= student ? student.employer || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="parent_work_phone">Work Phone</label>
+                <input type="tel" id="parent_work_phone" name="parent_work_phone"
+                       placeholder="Work extension or number"
+                       value="<%= student ? student.parent_work_phone || '' : '' %>" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. PARENT / GUARDIAN 2 (SECONDARY) -->
+          <div class="card form-section parent2-sec">
+            <div class="form-section-title">
+              <span style="color: var(--blue)">👤</span> 3. Parent / Guardian 2 Information (Secondary)
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="guardian2_name">Full Name</label>
+                <input type="text" id="guardian2_name" name="guardian2_name"
+                       placeholder="e.g. Sarah Kamran"
+                       value="<%= student ? student.guardian2_name || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="guardian2_relationship">Relationship (e.g. Mother, Uncle)</label>
+                <input type="text" id="guardian2_relationship" name="guardian2_relationship"
+                       placeholder="e.g. Mother"
+                       value="<%= student ? student.guardian2_relationship || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="guardian2_phone">Cell Phone</label>
+                <input type="tel" id="guardian2_phone" name="guardian2_phone"
+                       placeholder="e.g. 03331234567"
+                       value="<%= student ? student.guardian2_phone || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="guardian2_email">Email Address</label>
+                <input type="email" id="guardian2_email" name="guardian2_email"
+                       placeholder="e.g. guardian2@email.com"
+                       value="<%= student ? student.guardian2_email || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="guardian2_employer">Employer / Work Organization</label>
+                <input type="text" id="guardian2_employer" name="guardian2_employer"
+                       placeholder="Company Name"
+                       value="<%= student ? student.guardian2_employer || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="guardian2_work_phone">Work Phone</label>
+                <input type="tel" id="guardian2_work_phone" name="guardian2_work_phone"
+                       placeholder="Work extension or number"
+                       value="<%= student ? student.guardian2_work_phone || '' : '' %>" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. AUTHORIZED PICK-UP & EMERGENCY CONTACTS -->
+          <div class="card form-section pickup-sec">
+            <div class="form-section-title">
+              <span style="color: var(--green)">🚗</span> 4. Authorized Pick-Up & Emergency Contacts (Other than Parents)
+            </div>
+            
+            <!-- Contact 1 -->
+            <div class="pickup-grid">
+              <div class="pickup-title">Emergency Contact / Authorized Pick-Up 1</div>
+              <div class="form-group">
+                <label for="pickup1_name">Full Name</label>
+                <input type="text" id="pickup1_name" name="pickup1_name"
+                       value="<%= student ? student.pickup1_name || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup1_relationship">Relationship</label>
+                <input type="text" id="pickup1_relationship" name="pickup1_relationship"
+                       placeholder="e.g. Grandfather, Driver"
+                       value="<%= student ? student.pickup1_relationship || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup1_phone">Primary Phone</label>
+                <input type="tel" id="pickup1_phone" name="pickup1_phone"
+                       value="<%= student ? student.pickup1_phone || '' : '' %>" />
+              </div>
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="pickup1_authorized" name="pickup1_authorized"
+                       <%= student && student.pickup1_authorized ? 'checked' : '' %> />
+                <label for="pickup1_authorized">Authorized to Pick Up Child</label>
+              </div>
+            </div>
+
+            <!-- Contact 2 -->
+            <div class="pickup-grid">
+              <div class="pickup-title">Emergency Contact / Authorized Pick-Up 2</div>
+              <div class="form-group">
+                <label for="pickup2_name">Full Name</label>
+                <input type="text" id="pickup2_name" name="pickup2_name"
+                       value="<%= student ? student.pickup2_name || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup2_relationship">Relationship</label>
+                <input type="text" id="pickup2_relationship" name="pickup2_relationship"
+                       value="<%= student ? student.pickup2_relationship || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup2_phone">Primary Phone</label>
+                <input type="tel" id="pickup2_phone" name="pickup2_phone"
+                       value="<%= student ? student.pickup2_phone || '' : '' %>" />
+              </div>
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="pickup2_authorized" name="pickup2_authorized"
+                       <%= student && student.pickup2_authorized ? 'checked' : '' %> />
+                <label for="pickup2_authorized">Authorized to Pick Up Child</label>
+              </div>
+            </div>
+
+            <!-- Contact 3 -->
+            <div class="pickup-grid">
+              <div class="pickup-title">Emergency Contact / Authorized Pick-Up 3</div>
+              <div class="form-group">
+                <label for="pickup3_name">Full Name</label>
+                <input type="text" id="pickup3_name" name="pickup3_name"
+                       value="<%= student ? student.pickup3_name || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup3_relationship">Relationship</label>
+                <input type="text" id="pickup3_relationship" name="pickup3_relationship"
+                       value="<%= student ? student.pickup3_relationship || '' : '' %>" />
+              </div>
+              <div class="form-group">
+                <label for="pickup3_phone">Primary Phone</label>
+                <input type="tel" id="pickup3_phone" name="pickup3_phone"
+                       value="<%= student ? student.pickup3_phone || '' : '' %>" />
+              </div>
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="pickup3_authorized" name="pickup3_authorized"
+                       <%= student && student.pickup3_authorized ? 'checked' : '' %> />
+                <label for="pickup3_authorized">Authorized to Pick Up Child</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. PEDIATRICIAN & MEDICAL DETAILS -->
+          <div class="card form-section medical-sec">
+            <div class="form-section-title">
+              <span style="color: var(--pink)">🩺</span> 5. Pediatrician &amp; Medical Details
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="physician_name">Child's Physician Name</label>
+                <input type="text" id="physician_name" name="physician_name"
+                       placeholder="Dr. Name"
+                       value="<%= student ? student.physician_name || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="physician_phone">Clinic Phone</label>
+                <input type="tel" id="physician_phone" name="physician_phone"
+                       value="<%= student ? student.physician_phone || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="preferred_hospital">Preferred Emergency Hospital</label>
+                <input type="text" id="preferred_hospital" name="preferred_hospital"
+                       placeholder="e.g. Aga Khan, South City"
+                       value="<%= student ? student.preferred_hospital || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="insurance_provider">Medical Insurance Provider</label>
+                <input type="text" id="insurance_provider" name="insurance_provider"
+                       placeholder="e.g. Jubilee, EFU"
+                       value="<%= student ? student.insurance_provider || '' : '' %>" />
+              </div>
+
+              <div class="form-group full">
+                <label for="physician_address">Clinic Address</label>
+                <textarea id="physician_address" name="physician_address"
+                          placeholder="Physician clinic physical address…"><%= student ? student.physician_address || '' : '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. HEALTH PROFILE & SPECIAL CARE INSTRUCTIONS -->
+          <div class="card form-section health-sec">
+            <div class="form-section-title">
+              <span style="color: var(--yellow-hover)">🏥</span> 6. Health Profile &amp; Special Care Instructions
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="food_allergies">Food Allergies / Dietary Restrictions</label>
+                <input type="text" id="food_allergies" name="food_allergies"
+                       placeholder="e.g. Peanuts, Lactose Intolerant"
+                       value="<%= student ? student.food_allergies || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="environmental_allergies">Environmental / Medication Allergies</label>
+                <input type="text" id="environmental_allergies" name="environmental_allergies"
+                       placeholder="e.g. Dust, Penicillin"
+                       value="<%= student ? student.environmental_allergies || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="chronic_conditions">Chronic Conditions / Asthma Details</label>
+                <input type="text" id="chronic_conditions" name="chronic_conditions"
+                       value="<%= student ? student.chronic_conditions || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="regular_medications">Regular Medications</label>
+                <input type="text" id="regular_medications" name="regular_medications"
+                       placeholder="Medication names & schedule"
+                       value="<%= student ? student.regular_medications || '' : '' %>" />
+              </div>
+
+              <div class="form-group full">
+                <label for="sensory_notes">Special Routine / Sensory / Sleep Notes</label>
+                <textarea id="sensory_notes" name="sensory_notes"
+                          placeholder="e.g. Nap times, pacifier details, sensory triggers…"><%= student ? student.sensory_notes || '' : '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. CONSENTS & MEDIA PERMISSIONS -->
+          <div class="card form-section consent-sec">
+            <div class="form-section-title">
+              <span style="color: var(--blue)">✍️</span> 7. Consents &amp; Media Permissions
+            </div>
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="consent_photo_video" name="consent_photo_video"
+                       <%= student && student.consent_photo_video ? 'checked' : '' %> />
+                <label for="consent_photo_video"><strong>Photo &amp; Video Consent</strong>: I grant permission for my child's photograph/video to be taken for internal daily updates, learning portfolios, and parent communication apps.</label>
+              </div>
+
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="consent_social_media" name="consent_social_media"
+                       <%= student && student.consent_social_media ? 'checked' : '' %> />
+                <label for="consent_social_media"><strong>Social Media &amp; Marketing</strong>: I grant permission for promotional photos (without child name) on the center's official website or social media page.</label>
+              </div>
+
+              <div class="form-group checkbox-group">
+                <input type="checkbox" id="consent_topical" name="consent_topical"
+                       <%= student && student.consent_topical ? 'checked' : '' %> />
+                <label for="consent_topical"><strong>Sunscreen / Topical Application</strong>: I give permission for staff to apply parent-provided sunscreen and diaper rash cream as needed.</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. INTERNAL OFFICE INTAKE CHECKLIST (ADMIN ONLY) -->
+          <div class="card form-section checklist-sec">
+            <div class="form-section-title">
+              <span style="color: var(--green)">📋</span> 8. Administration Intake Checklist (Internal Office Use Only)
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="classroom_assigned">Classroom Assigned</label>
+                <input type="text" id="classroom_assigned" name="classroom_assigned"
+                       placeholder="e.g. Toddler Room A"
+                       value="<%= student ? student.classroom_assigned || '' : '' %>" />
+              </div>
+
+              <div class="form-group">
+                <label for="lead_director">Lead Director</label>
+                <input type="text" id="lead_director" name="lead_director"
+                       placeholder="Director name"
+                       value="<%= student ? student.lead_director || '' : '' %>" />
+              </div>
+
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="fee_received" name="fee_received"
+                       <%= student && student.fee_received ? 'checked' : '' %> />
+                <label for="fee_received">Registration Fee Received</label>
+              </div>
+
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="deposit_received" name="deposit_received"
+                       <%= student && student.deposit_received ? 'checked' : '' %> />
+                <label for="deposit_received">Security Deposit Received</label>
+              </div>
+
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="billing_created" name="billing_created"
+                       <%= student && student.billing_created ? 'checked' : '' %> />
+                <label for="billing_created">Billing Profile &amp; Monthly Schedule Created</label>
+              </div>
+
+              <div class="form-group checkbox-group" style="padding-top:24px;">
+                <input type="checkbox" id="welcome_kit_issued" name="welcome_kit_issued"
+                       <%= student && student.welcome_kit_issued ? 'checked' : '' %> />
+                <label for="welcome_kit_issued">Welcome Kit Issued to Parents</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9. SYSTEM SETTINGS -->
+          <div class="card form-section system-sec">
+            <div class="form-section-title">
+              <span style="color: var(--pink)">⚙️</span> 9. Program Timing &amp; Record Settings
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="program">Program *</label>
+                <select id="program" name="program" required>
+                  <option value="">Select program track…</option>
+                  <option value="montessori"  <%= student && student.program === 'montessori'  ? 'selected' : '' %>>Montessori Early Learning (Age 2 - 5)</option>
+                  <option value="daycare"     <%= student && student.program === 'daycare'     ? 'selected' : '' %>>Daycare Services</option>
+                  <option value="afterschool" <%= student && student.program === 'afterschool' ? 'selected' : '' %>>After-School Care</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="shift">Shift Timings *</label>
+                <select id="shift" name="shift" required>
+                  <option value="">Select Timing Shift…</option>
+                  <option value="morning"   <%= student && student.shift === 'morning'   ? 'selected' : '' %>>Morning Core Program (8:30 AM - 12:30 PM)</option>
+                  <option value="afternoon" <%= student && student.shift === 'afternoon' ? 'selected' : '' %>>Afternoon Care Program (1:00 PM - 5:30 PM)</option>
+                  <option value="full-day"  <%= student && student.shift === 'full-day'  ? 'selected' : '' %>>Full Corporate Care (8:00 AM - 6:30 PM)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="emergency_contact">Emergency Contact Phone Number *</label>
+                <input type="tel" id="emergency_contact" name="emergency_contact"
+                       placeholder="Primary emergency contact phone"
+                       value="<%= student ? student.emergency_contact || '' : '' %>"
+                       required />
+              </div>
+
+              <div class="form-group">
+                <label for="status">Enrollment Status *</label>
+                <select id="status" name="status" required>
+                  <option value="active"    <%= !student || student.status === 'active'    ? 'selected' : '' %>>Active</option>
+                  <option value="inactive"  <%= student && student.status === 'inactive'   ? 'selected' : '' %>>Inactive</option>
+                  <option value="graduated" <%= student && student.status === 'graduated'  ? 'selected' : '' %>>Graduated</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <label for="notes">General Administrative Notes</label>
+                <textarea id="notes" name="notes"
+                          placeholder="General internal records comments…"><%= student ? student.notes || '' : '' %></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="save-student-btn">
+              <%= student ? '💾 Save Changes' : '➕ Add Student' %>
+            </button>
+            <a href="/admin/students" class="btn btn-ghost" id="cancel-btn">Cancel</a>
+            
+            <% if (student && student.id) { %>
+              <button type="button" class="btn btn-danger-ghost" id="delete-trigger-btn" style="margin-left: auto;">
+                <i class="fas fa-trash-alt"></i> Delete Record
+              </button>
+            <% } %>
+          </div>
+
+        </form>
+
+        <% if (student && student.id) { %>
+          <!-- Real delete form triggered securely -->
+          <form id="real-delete-form" action="/admin/students/<%= student.id %>/delete" method="POST" style="display:none;"></form>
+          <script nonce="<%= nonce %>">
+            document.getElementById('delete-trigger-btn').addEventListener('click', function() {
+              if (confirm('Are you sure you want to permanently delete this student record? This action cannot be undone.')) {
+                document.getElementById('real-delete-form').submit();
+              }
+            });
+          </script>
+        <% } %>
+
+      </div>
+    </main>
+  </div>
+
+  <script nonce="<%= nonce %>">
+    document.getElementById('student-form').addEventListener('submit', function() {
+      const btn = document.getElementById('save-student-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    });
+  </script>
+</body>
+</html>

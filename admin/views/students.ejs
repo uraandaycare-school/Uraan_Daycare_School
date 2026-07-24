@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/admin-head', { title: 'Students', nonce }) %>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('./partials/admin-sidebar', { currentPage: 'students', admin }) %>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <div class="topbar-title">👩‍🎓 Student Records</div>
+          <div class="topbar-breadcrumb"><%= total %> student<%= total !== 1 ? 's' : '' %> found</div>
+        </div>
+        <a href="/admin/students/new" class="btn btn-primary btn-sm" id="add-student-btn">
+          <i class="fas fa-user-plus"></i> Add Student
+        </a>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- Alerts -->
+        <% const successMsg = {
+          added:   '✅ Student record added successfully.',
+          updated: '✅ Student record updated successfully.',
+          deleted: '🗑️ Student record deleted.',
+        }; %>
+        <% if (successMsg[success]) { %>
+          <div class="alert alert-success" id="status-alert">
+            <i class="fas fa-check-circle"></i>
+            <%= successMsg[success] %>
+          </div>
+        <% } %>
+        <% if (success === 'delete_failed') { %>
+          <div class="alert alert-danger" id="status-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            Failed to delete student record.
+          </div>
+        <% } %>
+
+        <!-- Search & Filter Bar -->
+        <div class="card" style="padding:18px;margin-bottom:16px;">
+          <form method="GET" action="/admin/students" id="search-form">
+            <div class="search-bar" style="margin-bottom:0;">
+              <div style="position:relative;flex:2;min-width:220px;">
+                <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;pointer-events:none;"></i>
+                <input
+                  type="text"
+                  name="search"
+                  id="student-search"
+                  placeholder="Search by name, parent, or email…"
+                  value="<%= search %>"
+                  style="padding-left:40px;"
+                />
+              </div>
+              <select name="program" id="program-filter">
+                <option value="">All Programs</option>
+                <option value="montessori"  <%= program === 'montessori'  ? 'selected' : '' %>>🎨 Montessori</option>
+                <option value="daycare"     <%= program === 'daycare'     ? 'selected' : '' %>>🏠 Daycare</option>
+                <option value="afterschool" <%= program === 'afterschool' ? 'selected' : '' %>>📚 After School</option>
+              </select>
+              <select name="status" id="status-filter">
+                <option value="">All Statuses</option>
+                <option value="active"    <%= status === 'active'    ? 'selected' : '' %>>✅ Active</option>
+                <option value="inactive"  <%= status === 'inactive'  ? 'selected' : '' %>>⏸️ Inactive</option>
+                <option value="graduated" <%= status === 'graduated' ? 'selected' : '' %>>🎓 Graduated</option>
+              </select>
+              <button type="submit" class="btn btn-primary btn-sm" id="search-btn">
+                <i class="fas fa-search"></i> Search
+              </button>
+              <% if (search || program || status) { %>
+              <a href="/admin/students" class="btn btn-ghost btn-sm" id="clear-btn">
+                <i class="fas fa-times"></i> Clear
+              </a>
+              <% } %>
+            </div>
+          </form>
+        </div>
+
+        <!-- Student Table -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Child Name</th>
+                  <th>Date of Birth</th>
+                  <th>Program</th>
+                  <th>Shift</th>
+                  <th>Parent Name</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Enrolled</th>
+                  <th style="text-align:center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (students.length === 0) { %>
+                <tr>
+                  <td colspan="10" style="text-align:center;padding:48px;color:var(--muted);">
+                    <div style="font-size:2.5rem;margin-bottom:12px;">👩‍🎓</div>
+                    <div style="font-family:var(--font-title);font-size:1rem;font-weight:600;color:var(--navy);margin-bottom:8px;">No students found</div>
+                    <% if (search || program || status) { %>
+                      <a href="/admin/students" style="color:var(--pink);font-weight:700;">Clear filters →</a>
+                    <% } else { %>
+                      <a href="/admin/students/new" style="color:var(--pink);font-weight:700;">Add the first student →</a>
+                    <% } %>
+                  </td>
+                </tr>
+                <% } %>
+
+                <% students.forEach((s, i) => {
+                     const dob      = s.child_dob  ? new Date(s.child_dob).toLocaleDateString('en-GB')  : '—';
+                     const enrolled = s.enrolled_at ? new Date(s.enrolled_at).toLocaleDateString('en-GB') : '—';
+                %>
+                <tr>
+                  <td class="text-muted text-sm" style="font-weight:600;">
+                    <%= (page - 1) * limit + i + 1 %>
+                  </td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink-light),var(--yellow-light));display:flex;align-items:center;justify-content:center;font-family:var(--font-title);font-weight:700;font-size:0.85rem;color:var(--pink);flex-shrink:0;">
+                        <%= s.child_name.charAt(0).toUpperCase() %>
+                      </div>
+                      <span style="font-weight:700;font-family:var(--font-title);"><%= s.child_name %></span>
+                    </div>
+                  </td>
+                  <td class="text-sm text-muted"><%= dob %></td>
+                  <td><span class="badge badge-<%= s.program %>"><%= s.program %></span></td>
+                  <td class="text-sm text-muted" style="text-transform:capitalize;"><%= s.shift %></td>
+                  <td style="font-weight:600;"><%= s.parent_name %></td>
+                  <td class="text-sm"><%= s.parent_phone %></td>
+                  <td><span class="badge badge-<%= s.status %>"><%= s.status %></span></td>
+                  <td class="text-sm text-muted"><%= enrolled %></td>
+                  <td>
+                    <div class="flex gap-2 items-center" style="justify-content:center;">
+                      <a href="/admin/students/<%= s.id %>/edit"
+                         class="btn btn-ghost btn-sm"
+                         id="edit-student-<%= s.id %>"
+                         title="Edit student"
+                         style="border-radius:var(--radius-full);">
+                        <i class="fas fa-pen" style="color:var(--navy-light);"></i>
+                      </a>
+                      <form action="/admin/students/<%= s.id %>/delete" method="POST"
+                            onsubmit="return confirm('Delete <%= s.child_name %>? This cannot be undone.');"
+                            style="margin:0;">
+                        <button type="submit"
+                                class="btn btn-danger-ghost btn-sm"
+                                id="delete-student-<%= s.id %>"
+                                title="Delete student"
+                                style="border-radius:var(--radius-full);">
+                          <i class="fas fa-trash-alt"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <% if (totalPages > 1) { %>
+          <div class="pagination">
+            <% if (page > 1) { %>
+              <a href="?page=<%= page-1 %>&search=<%= search %>&program=<%= program %>&status=<%= status %>"
+                 class="page-btn" id="prev-page">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            <% } %>
+            <% for (let p = Math.max(1, page-2); p <= Math.min(totalPages, page+2); p++) { %>
+              <a href="?page=<%= p %>&search=<%= search %>&program=<%= program %>&status=<%= status %>"
+                 class="page-btn <%= p === page ? 'active' : '' %>"
+                 id="page-<%= p %>"><%= p %></a>
+            <% } %>
+            <% if (page < totalPages) { %>
+              <a href="?page=<%= page+1 %>&search=<%= search %>&program=<%= program %>&status=<%= status %>"
+                 class="page-btn" id="next-page">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            <% } %>
+          </div>
+          <% } %>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script nonce="<%= nonce %>">
+    const alertEl = document.getElementById('status-alert');
+    if (alertEl) {
+      setTimeout(() => {
+        alertEl.style.transition = 'opacity 0.5s';
+        alertEl.style.opacity = '0';
+        setTimeout(() => alertEl.remove(), 500);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>

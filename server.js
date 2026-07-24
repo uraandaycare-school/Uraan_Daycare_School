@@ -15,11 +15,15 @@
 
 require('dotenv').config();
 
-const express  = require('express');
-const path     = require('path');
-const helmet   = require('helmet');
-const rateLimit = require('express-rate-limit');
-const crypto   = require('crypto');
+const express      = require('express');
+const path         = require('path');
+const helmet       = require('helmet');
+const rateLimit    = require('express-rate-limit');
+const crypto       = require('crypto');
+const session      = require('express-session');
+const pgSession    = require('connect-pg-simple')(session);
+const pool         = require('./admin/db/connect');
+const adminRouter  = require('./admin/routes/adminRouter');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -35,7 +39,11 @@ const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAG
 
 // ─── View Engine (EJS) ───────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Support views from both public views/ and admin/views/
+app.set('views', [
+  path.join(__dirname, 'views'),
+  path.join(__dirname, 'admin', 'views'),
+]);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 0. CSP NONCE MIDDLEWARE
@@ -163,6 +171,37 @@ const formSubmitLimiter = rateLimit({
 //    Serves /css, /js, /assets — index.html is now rendered by EJS, not static.
 // ═══════════════════════════════════════════════════════════════════════════════
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 5b. SESSION MIDDLEWARE
+//     Sessions stored in Neon PostgreSQL via connect-pg-simple.
+//     secure: true only in production (HTTPS); sameSite: 'lax' prevents CSRF.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use(
+  session({
+    store: new pgSession({
+      pool,
+      tableName: 'session',
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET || 'uraan-dev-secret-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge:   24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true,
+      secure:   process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    },
+    name: 'uraan.sid',
+  })
+);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 5c. ADMIN ROUTER
+//     Mounted at /admin — must come BEFORE the public catch-all route.
+// ═══════════════════════════════════════════════════════════════════════════════
+app.use('/admin', adminRouter);
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 6. SECURITY HELPERS
@@ -411,6 +450,7 @@ app.get('/', (req, res) => {
 });
 
 // Catch-all: redirect unknown paths back to home
+// NOTE: This must come AFTER app.use('/admin', adminRouter)
 app.get('*', (req, res) => {
   res.redirect('/');
 });

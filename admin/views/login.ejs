@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/admin-head', { title: 'Login', nonce }) %>
+  <style nonce="<%= nonce %>">
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #E3F2FD 0%, #FCE4EC 50%, #FFF8E1 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background animated orbs — matching the public site hero */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+      animation: pulseOrb 8s ease-in-out infinite;
+    }
+    .bg-orb-1 { width:400px;height:400px;background:rgba(233,30,99,0.12); top:-80px;left:-100px; }
+    .bg-orb-2 { width:350px;height:350px;background:rgba(255,179,0,0.12); top:20%;right:-80px; animation-delay:2s; }
+    .bg-orb-3 { width:300px;height:300px;background:rgba(76,175,80,0.10); bottom:-60px;left:30%; animation-delay:4s; }
+
+    @keyframes pulseOrb {
+      0%,100% { transform: scale(1); opacity: 0.8; }
+      50%      { transform: scale(1.15); opacity: 1; }
+    }
+
+    .login-wrap { width: 100%; max-width: 440px; padding: 20px; position: relative; z-index: 1; }
+
+    /* Uraan brand header above card */
+    .login-brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .login-brand img {
+      width: 64px; height: 64px;
+      object-fit: contain;
+      margin: 0 auto 12px;
+      filter: drop-shadow(0 4px 12px rgba(233,30,99,0.2));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .login-brand h1 {
+      font-family: var(--font-title);
+      font-size: 1.9rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .login-brand h1 .u  { color: var(--navy-light); }
+    .login-brand h1 .r  { color: var(--pink); }
+    .login-brand h1 .a1 { color: var(--yellow-hover); }
+    .login-brand h1 .a2 { color: var(--blue); }
+    .login-brand h1 .n  { color: var(--green); }
+
+    .login-brand p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Login card */
+    .login-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(15,41,74,0.12), 0 0 0 1px rgba(255,255,255,0.5);
+      border-top: 4px solid var(--pink);
+    }
+
+    .login-card h2 {
+      font-family: var(--font-title);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .login-card .sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .field-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      font-family: var(--font-title);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 7px;
+    }
+
+    .input-wrap { position: relative; }
+    .input-wrap .field-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      padding-left: 42px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--border);
+      font-size: 0.92rem;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(233,30,99,0.10);
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-hover) 100%);
+      border: none;
+      border-radius: var(--radius-full);
+      color: #fff;
+      font-family: var(--font-title);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--bounce);
+      box-shadow: 0 8px 24px rgba(233,30,99,0.30);
+      margin-top: 8px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 36px rgba(233,30,99,0.40);
+    }
+
+    .btn-login:active { transform: scale(0.97); }
+
+    .btn-login:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-box {
+      background: var(--pink-light);
+      border: 1px solid rgba(233,30,99,0.25);
+      border-left: 4px solid var(--pink);
+      color: var(--pink-hover);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .back-link {
+      display: block; text-align: center;
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .back-link:hover { color: var(--navy); }
+
+    /* Credentials hint */
+    .hint-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--yellow-light);
+      border: 1px solid rgba(255,179,0,0.3);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--yellow-hover);
+      font-family: var(--font-title);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <div class="login-wrap">
+
+    <!-- Brand header -->
+    <div class="login-brand">
+      <img src="/assets/U.png" alt="Uraan Logo" />
+      <h1>
+        <span class="u">U</span><span class="r">r</span><span class="a1">a</span><span class="a2">a</span><span class="n">n</span>
+      </h1>
+      <p>Daycare &amp; School · Admin Portal</p>
+    </div>
+
+    <!-- Login card -->
+    <div class="login-card">
+      <h2>Welcome Back 👋</h2>
+      <p class="sub">Sign in to manage student records</p>
+
+      <% if (error) { %>
+        <div class="error-box" id="login-error">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= error %>
+        </div>
+      <% } %>
+
+      <div class="hint-pill">
+        <span>🔑</span> Default: admin / Uraan@2026
+      </div>
+
+      <form action="/admin/login" method="POST" id="admin-login-form" autocomplete="off">
+        <div class="form-group">
+          <label class="field-label" for="username">Username</label>
+          <div class="input-wrap">
+            <i class="fas fa-user field-icon"></i>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
+              required
+              autocomplete="username"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock field-icon"></i>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" id="login-submit-btn">
+          Sign In <i class="fas fa-arrow-right" style="margin-left:6px;"></i>
+        </button>
+      </form>
+    </div>
+
+    <a href="/" class="back-link">
+      <i class="fas fa-arrow-left" style="margin-right:5px;"></i>Back to Uraan Website
+    </a>
+  </div>
+
+  <script nonce="<%= nonce %>">
+    document.getElementById('admin-login-form').addEventListener('submit', function() {
+      const btn = document.getElementById('login-submit-btn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+      btn.disabled = true;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<%# admin-sidebar.ejs — Uraan-branded navigation sidebar %>
+<aside class="admin-sidebar">
+
+  <!-- Brand Logo -->
+  <div class="sidebar-logo">
+    <a href="/admin" class="sidebar-brand">
+      <img src="/assets/U.png" alt="Uraan Logo" />
+      <div>
+        <div class="brand-text">
+          <span class="u">U</span><span class="r">r</span><span class="a1">a</span><span class="a2">a</span><span class="n">n</span>
+        </div>
+        <span class="brand-sub">Admin Portal</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a href="/admin" class="nav-link <%= currentPage === 'dashboard' ? 'active' : '' %>">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+
+    <div class="nav-section-label">Students</div>
+    <a href="/admin/students" class="nav-link <%= currentPage === 'students' ? 'active' : '' %>">
+      <span class="nav-icon">👩‍🎓</span> All Students
+    </a>
+    <a href="/admin/students/new" class="nav-link <%= currentPage === 'add-student' ? 'active-yellow' : '' %>">
+      <span class="nav-icon">➕</span> Add Student
+    </a>
+
+    <div class="nav-section-label">Quick Links</div>
+    <a href="/" target="_blank" class="nav-link">
+      <span class="nav-icon">🌐</span> View Website
+    </a>
+    <a href="/admin/logout" class="nav-link">
+      <span class="nav-icon">🚪</span> Logout
+    </a>
+  </nav>
+
+  <!-- Footer user chip -->
+  <div class="sidebar-footer">
+    <div class="admin-chip">
+      <div class="admin-avatar"><%= admin.username.charAt(0).toUpperCase() %></div>
+      <div class="admin-info">
+        <strong><%= admin.username %></strong>
+        <span>Administrator</span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:0.65rem;color:var(--muted);margin-top:6px;">
+      Uraan Daycare &amp; School · Karachi
+    </div>
+  </div>
+</aside>
