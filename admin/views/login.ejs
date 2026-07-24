@@ -181,23 +181,7 @@
 
     .back-link:hover { color: var(--navy); }
 
-    /* Credentials hint */
-    .hint-pill {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: var(--yellow-light);
-      border: 1px solid rgba(255,179,0,0.3);
-      border-radius: var(--radius-full);
-      padding: 6px 14px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--yellow-hover);
-      font-family: var(--font-title);
-      margin-bottom: 20px;
-      text-align: center;
-    }
+
   </style>
 </head>
 <body>
@@ -229,9 +213,7 @@
         </div>
       <% } %>
 
-      <div class="hint-pill">
-        <span>🔑</span> Default: admin / Uraan@2026
-      </div>
+
 
       <form action="/admin/login" method="POST" id="admin-login-form" autocomplete="off">
         <div class="form-group">
