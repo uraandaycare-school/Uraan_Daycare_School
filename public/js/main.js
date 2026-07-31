@@ -501,7 +501,7 @@ function initWhatsAppWidget() {
   const waBtn = document.getElementById('whatsapp-widget');
   if (!waBtn) return;
 
-  const phoneNum = '923368334441'; // Official Karachi campus registrar line
+  const phoneNum = '923343328877'; // Official Karachi campus registrar line
   const message = encodeURIComponent("Assalamu Alaikum, I would like to inquire about admissions & campus fees at Uraan Daycare & School.");
 
   waBtn.addEventListener('click', () => {

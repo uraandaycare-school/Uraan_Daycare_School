@@ -479,16 +479,20 @@ function getLANAddress() {
   return 'localhost';
 }
 
-app.listen(PORT, '0.0.0.0', () => {
-  const lanIP = getLANAddress();
-  console.log('=============================================================');
-  console.log('  URAAN DAYCARE & SCHOOL WEB PORTAL');
-  console.log('  Campus: Karachi, Pakistan | Status: OWASP Hardened');
-  console.log('-------------------------------------------------------------');
-  console.log(`  LOCAL   → http://localhost:${PORT}`);
-  console.log(`  NETWORK → http://${lanIP}:${PORT}`);
-  console.log('=============================================================');
-  console.log(`  Security: CSP nonce | CSRF guard | PII-redacted logs`);
-  console.log(`  Architecture: EJS modular partials | ${PORT}`);
-  console.log('=============================================================');
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    const lanIP = getLANAddress();
+    console.log('=============================================================');
+    console.log('  URAAN DAYCARE & SCHOOL WEB PORTAL');
+    console.log('  Campus: Karachi, Pakistan | Status: OWASP Hardened');
+    console.log('-------------------------------------------------------------');
+    console.log(`  LOCAL   → http://localhost:${PORT}`);
+    console.log(`  NETWORK → http://${lanIP}:${PORT}`);
+    console.log('=============================================================');
+    console.log(`  Security: CSP nonce | CSRF guard | PII-redacted logs`);
+    console.log(`  Architecture: EJS modular partials | ${PORT}`);
+    console.log('=============================================================');
+  });
+}
+
+module.exports = app;

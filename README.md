@@ -16,7 +16,7 @@ This repository contains the **pre-launch coming-soon waitlist page** only, buil
 
 - **Directoress:** Montessori Directoress Nida Asif
 - **Campus Location:** Gulshan / Clifton, Karachi
-- **Contact:** uraandaycare@gmail.com | +92 3353328877
+- **Contact:** uraandaycare@gmail.com | +92 334 3328877
 - **Launch:** August 2026
 
 ---

@@ -7,3 +7,6 @@ yarn-error.log*
 startup.log
 startup.err
 
+
+# Local Netlify folder
+.netlify
