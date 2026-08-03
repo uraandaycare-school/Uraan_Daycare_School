@@ -15,7 +15,7 @@ Uraan Daycare & Montessori is an upcoming early childhood education campus in Ka
 This repository contains the **pre-launch coming-soon waitlist page** only, built to collect priority VIP pre-registrations before the physical campus opens.
 
 - **Directoress:** Montessori Directoress Nida Asif
-- **Campus Location:** Gulshan / Clifton, Karachi
+- **Campus Location:** Banglow No. A-250, Sector 11-A, Gulshan-e-Usman, Near Powerhouse Roundabout, North Karachi.
 - **Contact:** uraandaycare@gmail.com | +92 334 3328877
 - **Launch:** August 2026
 
