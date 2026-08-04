@@ -6,10 +6,3 @@ yarn-error.log*
 .DS_Store
 startup.log
 startup.err
-
-# Cloudflare / Wrangler
-.wrangler/
-_worker.js
-
-# Local Netlify folder
-.netlify

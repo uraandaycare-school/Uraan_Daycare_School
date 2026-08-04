@@ -28,9 +28,6 @@ const adminRouter  = require('./admin/routes/adminRouter');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust the reverse proxy (Cloudflare edge) for rate limiting and IP detection
-app.set('trust proxy', 1);
-
 
 // ─── Google reCAPTCHA Keys ───────────────────────────────────────────────────
 // Replace with real production keys via environment variables before deploying.

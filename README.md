@@ -1,10 +1,10 @@
 # Uraan Daycare & Montessori — Pre-Launch Waitlist
 
-[![Deployed on Cloudflare Pages](https://img.shields.io/badge/Deployed%20on-Cloudflare%20Pages-orange?logo=cloudflare)](https://pages.cloudflare.com)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://vercel.com)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)](https://nodejs.org)
 [![Security](https://img.shields.io/badge/Security-OWASP%20Hardened-blue)](https://owasp.org)
 
-> **Karachi's first high-security Montessori daycare** — pre-launch VIP waitlist page deployed on Cloudflare Pages.
+> **Karachi's first high-security Montessori daycare** — pre-launch VIP waitlist page deployed on Vercel.
 
 ---
 
@@ -31,7 +31,7 @@ This repository contains the **pre-launch coming-soon waitlist page** only, buil
 | Animations | GSAP + ScrollTrigger |
 | Security | Helmet, express-rate-limit, CSP nonce, CSRF guard |
 | Captcha | Google reCAPTCHA v2 |
-| Deployment | Cloudflare Pages (Advanced Mode via `_worker.js`) |
+| Deployment | Vercel (`@vercel/node`) |
 
 ---
 
@@ -39,10 +39,8 @@ This repository contains the **pre-launch coming-soon waitlist page** only, buil
 
 ```
 Uraan/
-├── server.js              # Express server (OWASP hardened, Cloudflare-ready)
-├── _worker.js             # Cloudflare Pages entry point (wraps Express app)
-├── build.js               # esbuild bundler script (run before deploy)
-├── wrangler.toml          # Cloudflare Wrangler configuration
+├── server.js              # Express server (OWASP hardened, Vercel-ready)
+├── vercel.json            # Vercel deployment configuration
 ├── package.json           # Dependencies
 ├── .env.example           # Environment variable template
 ├── views/
@@ -67,13 +65,11 @@ npm install
 ### 2. Set up environment variables
 ```bash
 cp .env.example .env
-# Edit .env and fill in your keys
+# Edit .env and fill in your reCAPTCHA keys
 ```
 
 `.env` file:
 ```
-DATABASE_URL=your_neon_postgres_connection_string
-SESSION_SECRET=a_long_random_secret_min_64_chars
 RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 NODE_ENV=development
@@ -87,55 +83,22 @@ node server.js
 
 ---
 
-## ☁️ Cloudflare Pages Deployment
+## ☁️ Vercel Deployment
 
-This app uses **Cloudflare Pages Advanced Mode** via a `_worker.js` entry point that wraps the Express app using Cloudflare's `nodejs_compat` layer.
-
-### Deploy via Cloudflare Pages Dashboard
-
+### Deploy via Vercel Dashboard
 1. Push this repo to GitHub
-2. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → Connect to Git
-3. Set the following **Build Settings** in the dashboard:
+2. Go to [vercel.com](https://vercel.com) → **New Project** → Import repo
+3. Add environment variables in Vercel dashboard:
+   - `RECAPTCHA_SITE_KEY`
+   - `RECAPTCHA_SECRET_KEY`
+   - `NODE_ENV=production`
+4. Deploy — Vercel auto-detects `vercel.json` and uses `@vercel/node`
 
-   | Setting | Value |
-   |---|---|
-   | Build command | `npm install && npm run build` |
-   | Build output directory | `/` (root) |
-   | Root directory | `/` (root) |
-
-4. Add the following **Environment Variables** under *Settings → Environment Variables → Production*:
-
-   | Variable | Value |
-   |---|---|
-   | `DATABASE_URL` | Your Neon PostgreSQL connection string |
-   | `SESSION_SECRET` | A long random secret (min 64 chars) |
-   | `RECAPTCHA_SITE_KEY` | Your reCAPTCHA v2 site key |
-   | `RECAPTCHA_SECRET_KEY` | Your reCAPTCHA v2 secret key |
-   | `NODE_ENV` | `production` |
-
-5. Deploy — Cloudflare detects `_worker.js` and runs it in Workers runtime with `nodejs_compat`.
-
-### Deploy via CLI (Wrangler)
+### Deploy via CLI
 ```bash
-npm install
-npm run build
-npx wrangler pages deploy . --project-name uraan-daycare-school
+npm i -g vercel
+vercel --prod
 ```
-
-> **Note:** The `DATABASE_URL` must be set in the Cloudflare dashboard; it cannot be committed to `wrangler.toml` for security.
-
----
-
-## 🗄️ Database (Neon PostgreSQL)
-
-This app uses [Neon](https://neon.tech) serverless PostgreSQL, which supports WebSocket-based connections compatible with Cloudflare Workers.
-
-**Connection string format:**
-```
-postgresql://user:password@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require
-```
-
-The `pg` driver connects over TLS to Neon's serverless endpoint. Ensure your `DATABASE_URL` includes `?sslmode=require`.
 
 ---
 
