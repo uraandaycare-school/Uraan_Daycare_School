@@ -2,15 +2,10 @@
  * URAAN-WEB-2026: Frontend Script Orchestrator
  * Controls: Scroll Animations, Mobile Navigation, Program Tabs,
  *           Multi-step Admissions Form Wizard, and API Submissions.
- *
- * Security:
- *   - X-Requested-With header on all API fetches (CSRF mitigation — OWASP A01)
- *   - alert() replaced with toast notifications (no innerHTML — OWASP A03)
  */
 
 /* ==========================================================================
    TOAST NOTIFICATION UTILITY
-   XSS-safe: uses textContent only — never innerHTML.
    Type: 'success' | 'error' | 'info'
    ========================================================================== */
 function showToast(message, type) {
@@ -35,12 +30,7 @@ function showToast(message, type) {
       : 'fas fa-info-circle';
 
   const text = document.createElement('span');
-  // UraanSecurity.safeText ensures textContent — loaded by security.js before this file
-  if (window.UraanSecurity) {
-    window.UraanSecurity.safeText(text, message);
-  } else {
-    text.textContent = String(message);
-  }
+  text.textContent = String(message);
 
   toast.appendChild(icon);
   toast.appendChild(text);
@@ -345,25 +335,8 @@ function initAdmissionsForm() {
   // Final Form Submission Handler
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     if (!validateCurrentStep()) return;
-
-    // Check Captcha token (reCAPTCHA primary)
-    let captchaToken = '';
-    try {
-      if (typeof grecaptcha !== 'undefined') {
-        captchaToken = grecaptcha.getResponse();
-      } else if (typeof turnstile !== 'undefined') {
-        captchaToken = turnstile.getResponse();
-      }
-    } catch(err) {
-      console.warn("reCAPTCHA API not loaded, using fallback.");
-    }
-
-    if (!captchaToken) {
-      showToast('Please complete the Google reCAPTCHA security verification.', 'info');
-      return;
-    }
 
     // Prepare payload
     const formData = new FormData(form);
@@ -371,20 +344,18 @@ function initAdmissionsForm() {
     formData.forEach((value, key) => {
       payload[key] = value;
     });
-    payload.captchaToken = captchaToken;
 
     // Show loading state
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.innerHTML;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Securing Session... <i class="fas fa-spinner fa-spin"></i>';
+    submitBtn.innerHTML = 'Submitting... <i class="fas fa-spinner fa-spin"></i>';
 
     try {
       const response = await fetch('/api/admissions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest', // CSRF guard — OWASP A01
         },
         body: JSON.stringify(payload)
       });
@@ -398,9 +369,7 @@ function initAdmissionsForm() {
         successCard.style.display = 'block';
         successCard.scrollIntoView({ behavior: 'smooth' });
       } else {
-        showToast(result.message || 'Admissions registration failed. Please review your credentials.', 'error');
-        // Reset Captcha to enforce fresh challenge on failure
-        try { grecaptcha.reset(); } catch(e) { try { turnstile.reset(); } catch(err) {} }
+        showToast(result.message || 'Submission failed. Please try again.', 'error');
       }
     } catch (error) {
       console.error('[Admissions] Submission error:', error);
@@ -432,41 +401,23 @@ function initContactForm() {
 
     if (!isAllValid) return;
 
-    let captchaToken = '';
-    try {
-      if (typeof grecaptcha !== 'undefined') {
-        captchaToken = grecaptcha.getResponse();
-      } else if (typeof turnstile !== 'undefined') {
-        captchaToken = turnstile.getResponse();
-      }
-    } catch (err) {
-      console.warn("reCAPTCHA API not loaded, using fallback.");
-    }
-
-    if (!captchaToken) {
-      showToast('Please complete the Google reCAPTCHA security verification.', 'info');
-      return;
-    }
-
     // Gather payload
     const formData = new FormData(form);
     const payload = {};
     formData.forEach((value, key) => {
       payload[key] = value;
     });
-    payload.captchaToken = captchaToken;
 
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.innerHTML;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Sending Inquiries... <i class="fas fa-spinner fa-spin"></i>';
+    submitBtn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
 
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest', // CSRF guard — OWASP A01
         },
         body: JSON.stringify(payload)
       });
@@ -479,10 +430,8 @@ function initContactForm() {
         contactInputs.forEach(input => {
           input.classList.remove('is-valid', 'is-invalid');
         });
-        try { grecaptcha.reset(); } catch(e) { try { turnstile.reset(); } catch(err) {} }
       } else {
         showToast(result.message || 'Submission failed. Please try again.', 'error');
-        try { grecaptcha.reset(); } catch(e) { try { turnstile.reset(); } catch(err) {} }
       }
     } catch (error) {
       console.error('[Contact] Submission error:', error);
