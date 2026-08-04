@@ -128,6 +128,13 @@ app.use(
 
     // Disable COEP to avoid breaking Google Maps / Turnstile cross-origin loads
     crossOriginEmbedderPolicy: false,
+
+    // ── HSTS: ONLY in production (HTTPS). In development, HSTS over HTTP causes
+    //    browsers to permanently block the local server after the first visit.
+    //    Brave+Tor bypasses this because it uses a fresh, isolated state per session.
+    strictTransportSecurity: process.env.NODE_ENV === 'production'
+      ? { maxAge: 15552000, includeSubDomains: true }
+      : false,
   })
 );
 
