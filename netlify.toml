@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# netlify.toml — Uraan Daycare & School
+#
+# All HTTP requests are rewritten to the serverless Express function.
+# Static assets in /public are served directly by Netlify's CDN.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+  # No build step needed — pure Node.js/EJS server
+  command   = "echo 'No build step'"
+  functions = "netlify/functions"
+  publish   = "public"
+
+[functions]
+  # Increase timeout for DB-heavy admin operations (max 26s on free tier)
+  node_bundler = "esbuild"
+
+  [functions."api"]
+    timeout = 26
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+[context.production.environment]
+  NODE_ENV = "production"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "development"
+
+# ─── Redirects ────────────────────────────────────────────────────────────────
+# All requests (static assets already handled by CDN before this runs)
+# are proxied to the Express serverless function.
+
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from   = "/admin/*"
+  to     = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from   = "/*"
+  to     = "/.netlify/functions/api"
+  status = 200

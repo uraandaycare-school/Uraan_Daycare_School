@@ -28,6 +28,8 @@ const adminRouter  = require('./admin/routes/adminRouter');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust reverse proxy in production (Netlify, etc.) for correct req.ip and rate limiting
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 
 // ─── Google reCAPTCHA Keys ───────────────────────────────────────────────────
 // Replace with real production keys via environment variables before deploying.
