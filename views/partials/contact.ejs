@@ -1,7 +1,6 @@
 <%#
   Partial: contact.ejs
   Contains: Contact info panel, Google Maps embed, and contact message form
-  Variables used: siteKey (Cloudflare Turnstile site key from server)
   Inline styles removed → CSS classes: .mb-24, .icon-accent, .mb-16, .mb-20, .w-full
   Security: target="_blank" links hardened with rel="noopener noreferrer"
 %>
@@ -163,16 +162,6 @@
             <span class="form-error-msg" id="contact-message-error" role="alert">
               Message must be at least 5 characters.
             </span>
-          </div>
-
-          <!-- Google reCAPTCHA — siteKey injected server-side -->
-          <div class="captcha-row">
-            <div
-              class="g-recaptcha"
-              data-sitekey="<%= siteKey %>"
-              data-theme="light"
-              aria-label="Security verification captcha"
-            ></div>
           </div>
 
           <button type="submit" class="btn btn-primary w-full">

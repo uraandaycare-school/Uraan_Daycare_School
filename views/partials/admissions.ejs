@@ -1,7 +1,6 @@
 <%#
   Partial: admissions.ejs
-  Contains: Multi-step enrollment wizard form (3 steps) + Turnstile CAPTCHA
-  Variables used: siteKey (Cloudflare Turnstile site key from server)
+  Contains: Multi-step enrollment wizard form (3 steps)
   Inline styles removed → CSS classes: .mb-20, .text-pink, .success-desc, .success-contact, .mt-24
 %>
 
@@ -237,16 +236,6 @@
                   Please choose a timing shift.
                 </span>
               </div>
-            </div>
-
-            <!-- Google reCAPTCHA — siteKey injected server-side -->
-            <div class="captcha-row">
-              <div
-                class="g-recaptcha"
-                data-sitekey="<%= siteKey %>"
-                data-theme="light"
-                aria-label="Security verification captcha"
-              ></div>
             </div>
 
             <div class="form-actions">
