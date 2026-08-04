@@ -12,6 +12,9 @@ const adminRouter = require('./admin/routes/adminRouter');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Required for Vercel (and any reverse-proxy host) so cookies/sessions work correctly
+app.set('trust proxy', 1);
+
 // ─── View Engine (EJS) ───────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
 app.set('views', [
@@ -40,6 +43,7 @@ app.use(
     cookie: {
       maxAge:   24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
+      secure:   process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     },
     name: 'uraan.sid',
