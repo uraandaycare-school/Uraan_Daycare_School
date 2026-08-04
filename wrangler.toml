@@ -1,0 +1,22 @@
+name = "uraan-daycare-school"
+main = "_worker.bundle.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ─── Non-secret environment variables ────────────────────────────────────────
+# Safe to commit — no credentials here.
+[vars]
+PORT     = "3000"
+NODE_ENV = "production"
+
+# ─── Secret environment variables ────────────────────────────────────────────
+# DO NOT add secrets here — they will be committed to git and exposed.
+# Instead, set these in the Cloudflare Pages dashboard:
+#   dash.cloudflare.com → Workers & Pages → uraan-daycare-school
+#   → Settings → Environment Variables → Production → Add variable (mark as Encrypted)
+#
+#   DATABASE_URL         = postgresql://neondb_owner:<password>@ep-round-recipe-azq07qdi.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+#   SESSION_SECRET       = <generate: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))">
+#   RECAPTCHA_SITE_KEY   = 6Ld-LV0tAAAAACX9yh6eDaRRwozUzCP0izGp01vD
+#   RECAPTCHA_SECRET_KEY = <your secret key>
+

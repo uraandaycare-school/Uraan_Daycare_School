@@ -3,7 +3,7 @@
 const { Pool } = require('pg');
 
 // Neon PostgreSQL connection via DATABASE_URL env var
-// Works both locally (with Neon connection string in .env) and on Vercel (auto-injected)
+// Works both locally (with Neon connection string in .env) and on Cloudflare Pages (set in dashboard)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },

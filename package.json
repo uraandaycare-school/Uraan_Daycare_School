@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build": "node build.js",
     "seed": "node admin/db/seed.js"
   },
   "dependencies": {
@@ -16,8 +17,13 @@
     "express-rate-limit": "^7.2.0",
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
-    "hostinger": "^1.0.6",
     "pdfkit": "^0.19.1",
     "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.12"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
   }
 }

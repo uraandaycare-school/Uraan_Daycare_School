@@ -28,7 +28,7 @@ const adminRouter  = require('./admin/routes/adminRouter');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust Vercel reverse proxy for rate limiting and IP detection
+// Trust the reverse proxy (Cloudflare edge) for rate limiting and IP detection
 app.set('trust proxy', 1);
 
 

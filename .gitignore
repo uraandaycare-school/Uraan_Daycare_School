@@ -7,6 +7,9 @@ yarn-error.log*
 startup.log
 startup.err
 
+# Cloudflare / Wrangler
+.wrangler/
+_worker.bundle.js
 
 # Local Netlify folder
 .netlify
