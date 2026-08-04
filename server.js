@@ -18,7 +18,7 @@ require('dotenv').config();
 const express      = require('express');
 const path         = require('path');
 const helmet       = require('helmet');
-const rateLimit    = require('express-rate-limit');
+
 const crypto       = require('crypto');
 const session      = require('express-session');
 const pgSession    = require('connect-pg-simple')(session);
@@ -97,12 +97,7 @@ app.use(
           'https://maps.googleapis.com',
         ],
 
-        connectSrc: [
-          "'self'",
-          'https://www.google.com/recaptcha/',
-          'https://www.google.com',
-          'https://www.gstatic.com',
-        ],
+        connectSrc: ["'self'", 'https:'],
 
         imgSrc: [
           "'self'",
@@ -157,20 +152,7 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '15kb' }));
 app.use(express.urlencoded({ extended: true, limit: '15kb' }));
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 4. RATE LIMITING
-//    5 form submissions per IP per 15-minute window.
-// ═══════════════════════════════════════════════════════════════════════════════
-const formSubmitLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many submissions from this IP. Please try again in 15 minutes.',
-  },
-});
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 5. STATIC FILES
@@ -262,20 +244,7 @@ const VALIDATORS = {
   shift:   (v) => ['morning', 'afternoon', 'full-day'].includes(v),
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 7. CSRF GUARD — OWASP A01
-//    Verifies custom header that cross-origin (CSRF) requests cannot set.
-//    All API POSTs must include: X-Requested-With: XMLHttpRequest
-// ═══════════════════════════════════════════════════════════════════════════════
-function requireXHR(req, res, next) {
-  if (req.headers['x-requested-with'] !== 'XMLHttpRequest') {
-    return res.status(403).json({
-      success: false,
-      message: 'Forbidden: Invalid request origin. CSRF protection active.',
-    });
-  }
-  next();
-}
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 8. CLOUDFLARE TURNSTILE CAPTCHA VERIFICATION
@@ -314,7 +283,7 @@ async function verifyCaptchaToken(token, ipAddress) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 9. API: ADMISSIONS — POST /api/admissions
 // ═══════════════════════════════════════════════════════════════════════════════
-app.post('/api/admissions', requireXHR, formSubmitLimiter, async (req, res) => {
+app.post('/api/admissions', async (req, res) => {
   const {
     childName, childDob, program,
     parentName, parentPhone, parentEmail,
@@ -377,7 +346,7 @@ app.post('/api/admissions', requireXHR, formSubmitLimiter, async (req, res) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 10. API: CONTACT — POST /api/contact
 // ═══════════════════════════════════════════════════════════════════════════════
-app.post('/api/contact', requireXHR, formSubmitLimiter, async (req, res) => {
+app.post('/api/contact', async (req, res) => {
   const { name, email, phone, message, captchaToken } = req.body;
 
   const isHuman = await verifyCaptchaToken(captchaToken, req.ip);
@@ -421,7 +390,7 @@ app.post('/api/contact', requireXHR, formSubmitLimiter, async (req, res) => {
 //     OWASP A04: PII-redacted structured log
 //     OWASP A09: No raw PII written to stdout
 // ═══════════════════════════════════════════════════════════════════════════════
-app.post('/api/waitlist', requireXHR, formSubmitLimiter, (req, res) => {
+app.post('/api/waitlist', (req, res) => {
   const raw = req.body || {};
   const sName  = sanitizeInput(String(raw.name  || ''));
   const sEmail = sanitizeInput(String(raw.email || ''));
