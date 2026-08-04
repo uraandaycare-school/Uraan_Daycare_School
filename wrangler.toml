@@ -1,5 +1,4 @@
 name = "uraan-daycare-school"
-main = "_worker.bundle.js"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 

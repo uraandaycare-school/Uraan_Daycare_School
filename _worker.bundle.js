@@ -1,9 +1,4 @@
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
 }) : x)(function(x) {
@@ -13,22 +8,6 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
 
 // admin/db/connect.js
 var require_connect = __commonJS({
@@ -547,21 +526,21 @@ var require_server = __commonJS({
     var pgSession = __require("connect-pg-simple")(session);
     var pool = require_connect();
     var adminRouter = require_adminRouter();
-    var app2 = express();
+    var app = express();
     var PORT = process.env.PORT || 3e3;
-    app2.set("trust proxy", 1);
+    app.set("trust proxy", 1);
     var RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
     var RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
-    app2.set("view engine", "ejs");
-    app2.set("views", [
+    app.set("view engine", "ejs");
+    app.set("views", [
       path.join(__dirname, "views"),
       path.join(__dirname, "admin", "views")
     ]);
-    app2.use((req, res, next) => {
+    app.use((req, res, next) => {
       res.locals.nonce = crypto.randomBytes(16).toString("base64");
       next();
     });
-    app2.use(
+    app.use(
       helmet({
         contentSecurityPolicy: {
           directives: {
@@ -620,15 +599,15 @@ var require_server = __commonJS({
         crossOriginEmbedderPolicy: false
       })
     );
-    app2.use((req, res, next) => {
+    app.use((req, res, next) => {
       res.setHeader(
         "Permissions-Policy",
         "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=()"
       );
       next();
     });
-    app2.use(express.json({ limit: "15kb" }));
-    app2.use(express.urlencoded({ extended: true, limit: "15kb" }));
+    app.use(express.json({ limit: "15kb" }));
+    app.use(express.urlencoded({ extended: true, limit: "15kb" }));
     var formSubmitLimiter = rateLimit({
       windowMs: 15 * 60 * 1e3,
       // 15 minutes
@@ -640,8 +619,8 @@ var require_server = __commonJS({
         message: "Too many submissions from this IP. Please try again in 15 minutes."
       }
     });
-    app2.use(express.static(path.join(__dirname, "public"), { index: false }));
-    app2.use(
+    app.use(express.static(path.join(__dirname, "public"), { index: false }));
+    app.use(
       session({
         store: new pgSession({
           pool,
@@ -661,7 +640,7 @@ var require_server = __commonJS({
         name: "uraan.sid"
       })
     );
-    app2.use("/admin", adminRouter);
+    app.use("/admin", adminRouter);
     function redact(str) {
       if (!str || typeof str !== "string" || str.length === 0) return "[empty]";
       return str.slice(0, 2) + "***";
@@ -731,7 +710,7 @@ var require_server = __commonJS({
         return false;
       }
     }
-    app2.post("/api/admissions", requireXHR, formSubmitLimiter, async (req, res) => {
+    app.post("/api/admissions", requireXHR, formSubmitLimiter, async (req, res) => {
       const {
         childName,
         childDob,
@@ -784,7 +763,7 @@ var require_server = __commonJS({
         message: "Congratulations! Your application has been securely submitted. Our Registrar will contact you shortly to confirm your campus visit."
       });
     });
-    app2.post("/api/contact", requireXHR, formSubmitLimiter, async (req, res) => {
+    app.post("/api/contact", requireXHR, formSubmitLimiter, async (req, res) => {
       const { name, email, phone, message, captchaToken } = req.body;
       const isHuman = await verifyCaptchaToken(captchaToken, req.ip);
       if (!isHuman) {
@@ -813,7 +792,7 @@ var require_server = __commonJS({
         message: "Your message was sent successfully. We will reply within 24 hours."
       });
     });
-    app2.post("/api/waitlist", requireXHR, formSubmitLimiter, (req, res) => {
+    app.post("/api/waitlist", requireXHR, formSubmitLimiter, (req, res) => {
       const raw = req.body || {};
       const sName = sanitizeInput(String(raw.name || ""));
       const sEmail = sanitizeInput(String(raw.email || ""));
@@ -832,13 +811,13 @@ var require_server = __commonJS({
         message: "You're on the list! We'll WhatsApp you the moment enrollment opens."
       });
     });
-    app2.get("/", (req, res) => {
+    app.get("/", (req, res) => {
       res.render("index", {
         nonce: res.locals.nonce,
         siteKey: RECAPTCHA_SITE_KEY
       });
     });
-    app2.get("*", (req, res) => {
+    app.get("*", (req, res) => {
       res.redirect("/");
     });
     var os = __require("os");
@@ -854,7 +833,7 @@ var require_server = __commonJS({
       return "localhost";
     }
     if (__require.main === module) {
-      app2.listen(PORT, "0.0.0.0", () => {
+      app.listen(PORT, "0.0.0.0", () => {
         const lanIP = getLANAddress();
         console.log("=============================================================");
         console.log("  URAAN DAYCARE & SCHOOL WEB PORTAL");
@@ -868,16 +847,18 @@ var require_server = __commonJS({
         console.log("=============================================================");
       });
     }
-    module.exports = app2;
+    module.exports = app;
   }
 });
 
-// worker-entry.js
-var import_server = __toESM(require_server());
-import { httpServerHandler } from "cloudflare:node";
-var worker_entry_default = {
-  fetch: httpServerHandler(import_server.default)
-};
-export {
-  worker_entry_default as default
-};
+// _worker.js
+var require_worker = __commonJS({
+  "_worker.js"(exports, module) {
+    var { httpServerHandler } = __require("cloudflare:node");
+    var app = require_server();
+    module.exports = {
+      fetch: httpServerHandler(app)
+    };
+  }
+});
+export default require_worker();
