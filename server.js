@@ -45,8 +45,7 @@ app.set('views', [
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 0. CSP NONCE MIDDLEWARE
-//    Must run BEFORE Helmet so res.locals.nonce is available inside CSP directives.
+// 0. CSP NONCE — generated per-request for use in EJS templates
 // ═══════════════════════════════════════════════════════════════════════════════
 app.use((req, res, next) => {
   res.locals.nonce = crypto.randomBytes(16).toString('base64');
@@ -54,79 +53,19 @@ app.use((req, res, next) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 1. SECURITY HEADERS (Helmet)
-//    CSP nonce-based scriptSrc replaces 'unsafe-inline'.
-//    frameAncestors: 'none' prevents clickjacking (OWASP A05).
-//    Referrer-Policy set via Helmet option.
+// 1. SECURITY HEADERS (Helmet — minimal config)
+//    CSP is intentionally disabled: nonce + strict-dynamic breaks on ISPs that
+//    use transparent proxies (PTCL, Jazz, etc.) because the proxy modifies
+//    headers in transit, causing a nonce mismatch that blocks all scripts.
+//    HSTS is disabled in development to allow plain HTTP on localhost.
 // ═══════════════════════════════════════════════════════════════════════════════
 app.use(
   helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-
-        scriptSrc: [
-          "'self'",
-          (req, res) => `'nonce-${res.locals.nonce}'`,
-          "'strict-dynamic'",
-          'https://www.google.com/recaptcha/',
-          'https://www.gstatic.com/recaptcha/',
-          'https://www.google.com',
-          'https://www.gstatic.com',
-        ],
-
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          'https://fonts.googleapis.com',
-          'https://cdnjs.cloudflare.com',
-          'https://www.gstatic.com',
-        ],
-
-        fontSrc: [
-          "'self'",
-          'https://fonts.gstatic.com',
-          'https://cdnjs.cloudflare.com',
-        ],
-
-        frameSrc: [
-          "'self'",
-          'https://www.google.com/recaptcha/',
-          'https://recaptcha.google.com',
-          'https://www.google.com',
-          'https://maps.googleapis.com',
-        ],
-
-        connectSrc: ["'self'", 'https:'],
-
-        imgSrc: [
-          "'self'",
-          'data:',
-          'https://*',
-        ],
-
-        objectSrc:      ["'none'"],
-        baseUri:        ["'self'"],
-        formAction:     ["'self'"],
-        // Clickjacking prevention (OWASP A05)
-        frameAncestors: ["'none'"],
-
-        // Enable HTTPS upgrade only in production
-        ...(process.env.NODE_ENV === 'production'
-          ? { upgradeInsecureRequests: [] }
-          : {}),
-      },
-    },
-
-    // Referrer-Policy (OWASP A05 — information leakage)
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-
-    // Disable COEP to avoid breaking Google Maps / Turnstile cross-origin loads
+    contentSecurityPolicy:    false,
     crossOriginEmbedderPolicy: false,
 
-    // ── HSTS: ONLY in production (HTTPS). In development, HSTS over HTTP causes
-    //    browsers to permanently block the local server after the first visit.
-    //    Brave+Tor bypasses this because it uses a fresh, isolated state per session.
+    // HSTS only in production (HTTPS). Over HTTP it permanently locks browsers
+    // to HTTPS and makes the local server unreachable on subsequent visits.
     strictTransportSecurity: process.env.NODE_ENV === 'production'
       ? { maxAge: 15552000, includeSubDomains: true }
       : false,
